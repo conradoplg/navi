@@ -1,0 +1,2 @@
+DEFAULT_NOTE_FILE_NAME = u'Scratch.txt'
+DEFAULT_NOTE_EXTENSION = u'.txt'
