@@ -1,4 +1,4 @@
-from libnavi.thirdparty.path import path as Path
+from appcommon.thirdparty.path import path as Path
 from libnavi import util
 import wx
 

@@ -1,6 +1,6 @@
 from __future__ import with_statement, absolute_import
 
-from libnavi.thirdparty.path import path
+from appcommon.thirdparty.path import path
 
 
 

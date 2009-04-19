@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from libnavi.model.note import Note
-from libnavi.thirdparty.path import path as Path
+from appcommon.thirdparty.path import path as Path
 import unittest
 
 

@@ -1,6 +1,6 @@
 from __future__ import with_statement
 
-from libnavi.thirdparty.path import path as Path
+from appcommon.thirdparty.path import path as Path
 
 import re
 import sys

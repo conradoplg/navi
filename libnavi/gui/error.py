@@ -7,7 +7,7 @@ import wx
 # begin wxGlade: dependencies
 # end wxGlade
 
-from libnavi.i18n import _
+from appcommon.i18n import _
 from libnavi import meta
 
 # begin wxGlade: extracode

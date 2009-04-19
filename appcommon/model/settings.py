@@ -21,25 +21,24 @@ class UnicodeAwareConfigParser(SafeConfigParser):
     
     
 
-class Settings(UnicodeAwareConfigParser):
-    def __init__(self, path):
+class BaseSettings(UnicodeAwareConfigParser):
+    def __init__(self, path, defaults):
         UnicodeAwareConfigParser.__init__(self)
         self.path = path
         self.read(path)
-        self.__defaults = self._load_defaults()
+        self.__defaults = defaults
+        self._load_defaults(defaults)
         Publisher().sendMessage('settings.changed', self)
         
-    def _load_defaults(self):
-        defaults = (
-          ('Options', 'Font', ''),
-          ('Options', 'DataDir', ''),
-        )
+    def _load_defaults(self, defaults):
         for section, option, value in defaults:
             if not self.has_section(section):
                 self.add_section(section)
             if not self.has_option(section, option):
                 self.set(section, option, value)
-        return defaults
+    
+    def _get_defaults(self):
+        raise NotImplementedError()
     
     def set(self, section, option, value):
         UnicodeAwareConfigParser.set(self, section, option, value)

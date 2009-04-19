@@ -3,7 +3,7 @@ from libnavi import util
 import unittest
 
 from libnavi.control import notes
-from libnavi.thirdparty.path import path as Path
+from appcommon.thirdparty.path import path as Path
 
 
 class Test(unittest.TestCase, util.DiffTestCaseMixin):

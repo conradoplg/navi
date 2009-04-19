@@ -11,7 +11,7 @@ logging.getLogger().setLevel(logging.DEBUG)
 
 from libnavi.control.main import MainController
 from libnavi.gui.error import ErrorDialog
-from libnavi.thirdparty.path import path as Path
+from appcommon.thirdparty.path import path as Path
 from libnavi import util
 
 import wx
@@ -50,7 +50,7 @@ except NameError:
     script = None
 
 if sys.platform == 'win32':
-    from libnavi.windows.util import get_unicode_argv
+    from appcommon.windows.util import get_unicode_argv
     argv = get_unicode_argv()
 else:
     argv = sys.argv
