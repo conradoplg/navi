@@ -44,11 +44,11 @@ class Test(unittest.TestCase):
         NAME = '&Name'
         CLEAN_NAME = 'Name'
         
-        c = CommandCategory(NAME, None)
+        c = CommandCategory(NAME, [1, 2])
         
         self.assertEquals(NAME, c.name)
         self.assertEquals(CLEAN_NAME, c.clean_name)
-        self.assertEquals(None, c.commands)
+        self.assertEquals(c, [1, 2])
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.test_command']

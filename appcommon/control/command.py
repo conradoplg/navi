@@ -1,24 +1,24 @@
 from __future__ import with_statement, absolute_import
 
 from appcommon.model.shortcut import Shortcut
+from appcommon.model.command import Command
+from appcommon.util import flattened_chain, flattened_full_chain
 
 import wx
 from wx.lib.pubsub import Publisher
 
-class CommandController(object):
+class BaseCommandController(object):
     def __init__(self, control, settings, section):
         self.settings = settings
         self.control = control
         self.section = section
-        self.commands = []
-        self.main_menu, self.commands = self._make_commands(self.control)
-        _load_shortcuts(self.settings, self.commands)
+        
+        self.command_tree, self.commands = self._make_commands()
+        _load_shortcuts(self.settings, section, self.commands)
         self.accel_table = _get_accelerator_table(self.commands)
         #These must be sent in this order
-        Publisher().sendMessage('menu.built', self.main_menu)
-        #TODO: (2,2) Refactor: change this message name. This also notifies that
-        #    shortcuts have changed.
-        Publisher().sendMessage('menu.changed', (self.main_menu, self.commands, self.accel_table))
+        Publisher().sendMessage('commands.created', self.command_tree)
+        Publisher().sendMessage('commands.changed', (self.command_tree, self.commands, self.accel_table))
         
         Publisher().subscribe(self.on_language_changed, 'language.changed')
         Publisher().subscribe(self.on_command_execute, 'command.execute')
@@ -32,17 +32,29 @@ class CommandController(object):
             cmd.shortcuts = shortcuts
         _save_shortcuts(self.settings, self.commands)
         self.accel_table = _get_accelerator_table(self.commands)
-        Publisher().sendMessage('menu.changed', (self.main_menu, self.commands, self.accel_table))
+        Publisher().sendMessage('commands.changed', (self.command_tree, self.commands, self.accel_table))
         
     def on_language_changed(self, message):
-        self._make_commands(self.control, True)
-        Publisher().sendMessage('menu.changed', (self.main_menu, self.commands, self.accel_table))
+        self._update_commands()
+        Publisher().sendMessage('commands.changed', (self.command_tree, self.commands, self.accel_table))
         
     def on_command_execute(self, message):
         ide = message.data
         [cmd() for cmd in self.commands if cmd.ide == ide]
         
-    def _make_commands(self, control, update=False):
+    def _make_commands(self):
+        command_tree = self._get_commands()
+        return command_tree, list(flattened_chain(command_tree))
+    
+    def _update_commands(self):
+        command_tree = self._get_commands()
+        cmd_dic = dict((cmd.ide, cmd) for cmd in self.commands)
+        for cmd in flattened_full_chain(command_tree):
+            cmd_dic[cmd.ide].name = cmd.name
+            if isinstance(cmd, Command):
+                cmd_dic[cmd.ide].description = cmd.description
+    
+    def _get_commands(self):
         raise NotImplementedError()
     
 def _load_shortcuts(settings, section, commands):

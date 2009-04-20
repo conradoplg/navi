@@ -2,10 +2,12 @@ from __future__ import with_statement, absolute_import
 
 
 
-class CommandCategory(object):
-    def __init__(self, name, commands):
-        self.commands = commands
+class CommandCategory(list):
+    def __init__(self, name, commands=None, hidden=False):
         self.name = name
+        if commands:
+            self[:] = commands
+        self.hidden = hidden
         
     @property
     def clean_name(self):
