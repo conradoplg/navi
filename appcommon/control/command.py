@@ -5,7 +5,7 @@ from appcommon.model.command import Command
 from appcommon.util import flattened_chain, flattened_full_chain
 
 import wx
-from wx.lib.pubsub import Publisher
+from pubsub import pub
 
 from itertools import izip
 
@@ -20,11 +20,12 @@ class BaseCommandController(object):
         _load_shortcuts(self.settings, section, self.commands)
         self.accel_table = _get_accelerator_table(self.commands)
         #These must be sent in this order
-        Publisher().sendMessage('commands.created', self.command_tree)
-        Publisher().sendMessage('commands.changed', (self.command_tree, self.commands, self.accel_table))
+        pub.sendMessage('commands.created', command_tree=self.command_tree)
+        pub.sendMessage('commands.changed', command_tree=self.command_tree,
+                        commands=self.commands, accel_table=self.accel_table)
         
-        Publisher().subscribe(self.on_language_changed, 'language.changed')
-        Publisher().subscribe(self.on_command_execute, 'command.execute')
+        pub.subscribe(self.on_language_changed, 'language.changed')
+        pub.subscribe(self.on_command_execute, 'command.execute')
         
     def set_shortcuts(self, shortcuts_dic):
         """Set new shortcuts.
@@ -35,14 +36,15 @@ class BaseCommandController(object):
             cmd.shortcuts = shortcuts
         _save_shortcuts(self.settings, self.section, self.commands)
         self.accel_table = _get_accelerator_table(self.commands)
-        Publisher().sendMessage('commands.changed', (self.command_tree, self.commands, self.accel_table))
+        pub.sendMessage('commands.changed', command_tree=self.command_tree,
+                        commands=self.commands, accel_table=self.accel_table)
         
-    def on_language_changed(self, message):
+    def on_language_changed(self):
         self._update_commands()
-        Publisher().sendMessage('commands.changed', (self.command_tree, self.commands, self.accel_table))
+        pub.sendMessage('commands.changed', command_tree=self.command_tree,
+                        commands=self.commands, accel_table=self.accel_table)
         
-    def on_command_execute(self, message):
-        ide = message.data
+    def on_command_execute(self, ide):
         [cmd() for cmd in self.commands if cmd.ide == ide]
         
     def _make_commands(self):

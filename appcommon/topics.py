@@ -1,3 +1,4 @@
+from pubsub import pub
 from pubsub.utils.topicspec import TopicTreeDefnSimple
 
 
@@ -52,3 +53,6 @@ class CommonTopicTree(TopicTreeDefnSimple):
             option = 'The option which was changed'
             value = 'The new value'
             _required = 'settings', 'section', 'option', 'value'
+
+
+pub.addTopicDefnProvider(CommonTopicTree())

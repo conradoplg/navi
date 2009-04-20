@@ -2,7 +2,7 @@ from __future__ import with_statement, absolute_import
 
 from ConfigParser import SafeConfigParser
 
-from wx.lib.pubsub import Publisher
+from pubsub import pub
 
 
 
@@ -28,7 +28,7 @@ class BaseSettings(UnicodeAwareConfigParser):
         self.read(path)
         self.__defaults = defaults
         self._load_defaults(defaults)
-        Publisher().sendMessage('settings.changed', self)
+        pub.sendMessage('settings.changed', settings=self)
         
     def _load_defaults(self, defaults):
         for section, option, value in defaults:
@@ -42,7 +42,8 @@ class BaseSettings(UnicodeAwareConfigParser):
     
     def set(self, section, option, value):
         UnicodeAwareConfigParser.set(self, section, option, value)
-        Publisher().sendMessage('settings.changed.%s.%s' % (section, option), self)
+        pub.sendMessage('setting.changed', settings=self, section=section,
+                        option=option, value=value)
     
     def save(self):
         if not self.path.parent.exists():

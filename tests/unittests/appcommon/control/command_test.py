@@ -96,7 +96,7 @@ class Test(unittest.TestCase):
         
         c = DummyCommandController(control, settings, SECTION)
         c.change_language()
-        c.on_language_changed(None)
+        c.on_language_changed()
         self.assertEquals(NAME2, c.commands[0].name)
         self.assertEquals(DESC2, c.commands[0].description)
         self.assertEquals(NAME2, c.command_tree[0].name)
@@ -110,8 +110,7 @@ class Test(unittest.TestCase):
         mox.Replay(control)
         
         c = DummyCommandController(control, settings, SECTION)
-        class Dummy(object): data = 1
-        c.on_command_execute(Dummy)
+        c.on_command_execute(1)
         self.assert_(c._called)
 
 if __name__ == "__main__":
