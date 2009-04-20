@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 from libnavi import util
+from libnavi.control.notes import NotesController
+from libnavi.model import App
+from appcommon.model.settings import BaseSettings
+from libnavi.model.note import Note
+from libnavi.gui.main import MainWindow
+import mox
 import unittest
 
 from libnavi.control import notes
@@ -7,7 +13,74 @@ from appcommon.thirdparty.path import path as Path
 
 
 class Test(unittest.TestCase, util.DiffTestCaseMixin):
-
+    
+    def test_create(self):
+        mocker = mox.Mox()
+        settings = mocker.CreateMock(BaseSettings)
+        view = mocker.CreateMockAnything()
+        
+        settings.get('Options', 'DataDir').AndReturn('')
+        mocker.ReplayAll()
+        
+        model = App(settings)
+        c = NotesController(model, settings, view, Path('./tests/dummy'))
+        self.assert_(model.notes)
+        
+    def test_create_empty(self):
+        mocker = mox.Mox()
+        settings = mocker.CreateMock(BaseSettings)
+        view = mocker.CreateMockAnything()
+        
+        settings.get('Options', 'DataDir').AndReturn('')
+        mocker.ReplayAll()
+        
+        model = App(settings)
+        c = NotesController(model, settings, view, Path('./tests/dummy/nonotes'))
+        self.assertEquals(1, len(model.notes))
+        
+    def test_open_initial(self):
+        mocker = mox.Mox()
+        settings = mocker.CreateMock(BaseSettings)
+        note = mocker.CreateMock(Note)
+        view = mocker.CreateMockAnything()
+        
+        settings.get('Options', 'DataDir').AndReturn('')
+        note.open(create=True)
+        mocker.ReplayAll()
+        
+        model = App(settings)
+        c = NotesController(model, settings, view, Path('./tests/dummy/nonotes'))
+        model.notes = [note]
+        c.open_initial()
+        
+    def test_create_new(self):
+        mocker = mox.Mox()
+        settings = mocker.CreateMock(BaseSettings)
+        view = mocker.CreateMock(MainWindow)
+        
+        settings.get('Options', 'DataDir').AndReturn('')
+        view.ask_note_name().AndReturn('subdummy')
+        mocker.ReplayAll()
+        
+        model = App(settings)
+        c = NotesController(model, settings, view, Path('./tests/dummy/subdummy'))
+        c.create_new()
+        self.assertEquals(2, len(model.notes))
+        self.assertEquals('subdummy.txt', model.notes[-1].path.name)
+        
+    def test_create_new_empty_name(self):
+        mocker = mox.Mox()
+        settings = mocker.CreateMock(BaseSettings)
+        view = mocker.CreateMock(MainWindow)
+        
+        settings.get('Options', 'DataDir').AndReturn('')
+        view.ask_note_name().AndReturn('')
+        mocker.ReplayAll()
+        
+        model = App(settings)
+        c = NotesController(model, settings, view, Path('./tests/dummy/subdummy'))
+        c.create_new()
+        self.assertEquals(1, len(model.notes))
 
     def test_get_data_dir(self):
         inexistent_dir = Path('./oroaraoroara')
