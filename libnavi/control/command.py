@@ -11,7 +11,7 @@ class CommandController(BaseCommandController):
     def __init__(self, control, settings):
         self.control = control
         self.settings = settings
-        BaseCommandController.__init__(control, settings, config.SHORTCUTS_KEY)
+        BaseCommandController.__init__(self, control, settings, config.SHORTCUTS_KEY)
         
     def _get_commands(self):
         commands = []
