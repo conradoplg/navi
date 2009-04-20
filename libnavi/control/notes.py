@@ -2,7 +2,8 @@ from appcommon.thirdparty.path import path as Path
 from libnavi import util, config
 from libnavi.model.note import Note
 
-from wx.lib.pubsub import Publisher
+from pubsub import pub
+
 
 class NotesController(object):
     def __init__(self, model, settings, view, default_data_dir):
@@ -18,7 +19,7 @@ class NotesController(object):
             path = self.data_dir / config.DEFAULT_NOTE_FILE_NAME
             note = Note(get_name_from_path(path), path)
             self.model.notes = [note]
-        Publisher().subscribe(self.on_program_close, 'program.closed')
+        pub.subscribe(self.on_program_close, 'program.closed')
         
     def open_initial(self):
         for note in self.model.notes:
@@ -37,8 +38,7 @@ class NotesController(object):
         for page in pages:
             page.note.save(page.text.GetValue())
         
-    def on_program_close(self, message):
-        pages = message.data
+    def on_program_close(self, pages):
         self.save(pages)
 
 def get_data_dir(data_dir_specified, default_data_dir):

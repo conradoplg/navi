@@ -1,4 +1,4 @@
-from wx.lib.pubsub import Publisher
+from pubsub import pub
 
 class Note(object):
     def __init__(self, name, path):
@@ -19,7 +19,7 @@ class Note(object):
             except UnicodeDecodeError:
                 #TODO: add nicer message
                 raise
-        Publisher().sendMessage('note.opened', self)
+        pub.sendMessage('note.opened', note=self)
         
     def save(self, text):
         self.text = text
@@ -33,4 +33,4 @@ class Note(object):
             except UnicodeEncodeError:
                 #TODO: add nicer message
                 raise
-        Publisher().sendMessage('note.saved', self)
+        pub.sendMessage('note.saved', note=self)

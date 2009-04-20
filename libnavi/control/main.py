@@ -7,7 +7,7 @@ from libnavi.model import App
 from libnavi.control.notes import NotesController
 from appcommon.control.main import BaseMainController
 from appcommon.model.settings import BaseSettings
-from wx.lib.pubsub import Publisher
+from pubsub import pub
 import logging
 
 
@@ -22,15 +22,14 @@ class MainController(BaseMainController):
         self.model = App(self.settings)        
         self.notes = NotesController(self.model, self.settings, self.settings_path.parent)
         
-        Publisher().subscribe(self.on_program_closed, 'program.closed')
-        Publisher().sendMessage('settings.loaded', self.model.settings)
+        pub.subscribe(self.on_program_closed, 'program.closed')
         
         #TODO: use call after? handle exceptions
-        self.notes.open_initial_notes()
+        self.notes.open_initial()
         
     def quit(self):
         self.view.Close()
         
-    def on_program_closed(self, message):
+    def on_program_closed(self, pages):
         self.settings.save()
         logging.shutdown()

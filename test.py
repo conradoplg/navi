@@ -4,7 +4,7 @@ import unittest, os
 
 import logging
 logging.getLogger().setLevel(logging.DEBUG)
-from appcommon import topics
+from libnavi import topics
 
 
 class AllTests(unittest.TestSuite):
