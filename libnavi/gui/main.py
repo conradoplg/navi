@@ -98,6 +98,10 @@ class MainWindow(wx.Frame):
 
     def on_quit_item_click(self, event): # wxGlade: MainWindow.<event_handler>
         self.Close()
+
+    def on_close(self, event):
+        pub.sendMessage('program.closed', pages=self.pages)
+        self.Destroy()
         
     def on_note_opened(self, note):
         page = NotePage(note, self.main_notebook)
@@ -105,10 +109,13 @@ class MainWindow(wx.Frame):
         self.main_notebook.AddPage(page, note.name)
         page.text.SetValue(note.text)
         page.text.SetFocus()
+        
+    def on_commands_created(self, command_tree):
+        pass
+
+    def on_commands_changed(self, command_tree):
+        pass
     
-    def on_close(self, event):
-        pub.sendMessage('program.closed', pages=self.pages)
-        self.Destroy()
 
 # end of class MainWindow
 
