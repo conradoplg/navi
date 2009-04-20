@@ -7,6 +7,9 @@ from appcommon.util import flattened_chain, flattened_full_chain
 import wx
 from wx.lib.pubsub import Publisher
 
+from itertools import izip
+
+
 class BaseCommandController(object):
     def __init__(self, control, settings, section):
         self.settings = settings
@@ -30,7 +33,7 @@ class BaseCommandController(object):
         """
         for cmd, shortcuts in shortcuts_dic.iteritems():
             cmd.shortcuts = shortcuts
-        _save_shortcuts(self.settings, self.commands)
+        _save_shortcuts(self.settings, self.section, self.commands)
         self.accel_table = _get_accelerator_table(self.commands)
         Publisher().sendMessage('commands.changed', (self.command_tree, self.commands, self.accel_table))
         
@@ -48,11 +51,11 @@ class BaseCommandController(object):
     
     def _update_commands(self):
         command_tree = self._get_commands()
-        cmd_dic = dict((cmd.ide, cmd) for cmd in self.commands)
-        for cmd in flattened_full_chain(command_tree):
-            cmd_dic[cmd.ide].name = cmd.name
-            if isinstance(cmd, Command):
-                cmd_dic[cmd.ide].description = cmd.description
+        for new_cmd, old_cmd in izip(flattened_full_chain(command_tree),
+                                     flattened_full_chain(self.command_tree)):
+            old_cmd.name = new_cmd.name
+            if isinstance(new_cmd, Command):
+                old_cmd.description = new_cmd.description
     
     def _get_commands(self):
         raise NotImplementedError()
