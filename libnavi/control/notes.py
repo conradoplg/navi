@@ -37,6 +37,9 @@ class NotesController(object):
     def save(self, pages):
         for page in pages:
             page.note.save(page.text.GetValue())
+            
+    def close(self):
+        pass
         
     def on_program_close(self, pages):
         self.save(pages)

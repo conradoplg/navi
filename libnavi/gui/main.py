@@ -30,8 +30,6 @@ class MainWindow(BaseMainWindow):
         self.pages = []
         
         pub.subscribe(self.on_note_opened, 'note.opened')
-        pub.subscribe(self.on_commands_created, 'commands.created')
-        pub.subscribe(self.on_commands_changed, 'commands.changed')
 
     def __set_properties(self):
         # begin wxGlade: MainWindow.__set_properties
@@ -86,12 +84,6 @@ class MainWindow(BaseMainWindow):
         self.main_notebook.AddPage(page, note.name)
         page.text.SetValue(note.text)
         page.text.SetFocus()
-        
-    def on_commands_created(self, command_tree):
-        pass
-
-    def on_commands_changed(self, command_tree):
-        pass
     
 
 # end of class MainWindow

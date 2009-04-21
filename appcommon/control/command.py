@@ -111,7 +111,8 @@ def _save_shortcuts(settings, section, commands):
 
 def _load_default_shortcuts(commands):
     for cmd in commands:
-        cmd.load_default_shortcut()
+        if cmd:
+            cmd.load_default_shortcut()
 
 def _get_accelerator_table(commands):
     """Create an accelerator table from a command list.
@@ -119,6 +120,6 @@ def _get_accelerator_table(commands):
     @param commands: the command list from the application
     @type commands: list of appcommon.model.command.Command
     """
-    lst = [(shcut.flags, shcut.key_code, cmd.ide) for cmd in commands
+    lst = [(shcut.flags, shcut.key_code, cmd.ide) for cmd in commands if cmd
            for shcut in cmd.shortcuts] 
     return wx.AcceleratorTable(lst)

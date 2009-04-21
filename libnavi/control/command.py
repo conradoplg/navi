@@ -19,19 +19,21 @@ class CommandController(BaseCommandController):
         note_cat = CommandCategory(_('&Note'))
         note_cat.append(Command(
             10001, _('&New...'), _('Create a new note'),
-            self.control.notes.create,
+            self.control.notes.create_new,
             [Shortcut(wx.ACCEL_CTRL, ord('N'))]))
         note_cat.append(Command(
             10002, _('&Close'), _('Close the opened note'),
             self.control.notes.close,
             [Shortcut(wx.ACCEL_CTRL, ord('W'))]))
+        note_cat.append(None)
         note_cat.append(Command(
             10003, _('&Options...'), _('Open the application options'),
             self.control.open_options,
-            [Shortcut(wx.ACCEL_CTRL, ord('W'))]))
+            [Shortcut(wx.ACCEL_NORMAL, wx.WXK_F4)]))
+        note_cat.append(None)
         note_cat.append(Command(
             10004, _('&Quit'), _('Quit the application'),
-            self.control.close,
+            self.control.quit,
             [Shortcut(wx.ACCEL_CTRL, ord('Q'))]))
         commands.append(note_cat)
         
