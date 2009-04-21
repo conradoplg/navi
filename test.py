@@ -1,4 +1,5 @@
 from __future__ import with_statement, absolute_import
+import wx
 
 import unittest, os
 
@@ -38,6 +39,7 @@ class AllTests(unittest.TestSuite):
                     yield AllTests.filenameToModuleName(path)
        
     def runTests(self):
+        app = wx.App(False)
         unittest.TextTestRunner(verbosity=1).run(self)
     
 if __name__ == '__main__':

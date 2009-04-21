@@ -1,6 +1,7 @@
 from libnavi import config
 from appcommon.model.settings import BaseSettings
 from libnavi.control.command import CommandController
+import wx
 import mox
 import unittest
 

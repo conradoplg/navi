@@ -5,6 +5,7 @@ from libnavi.gui.options import OptionsDialog
 from pubsub import pub
 from libnavi.gui.note import NotePage
 from libnavi import meta
+from appcommon.gui.main import BaseMainWindow
 
 import wx
 
@@ -14,38 +15,15 @@ import wx
 import wx.lib.flatnotebook as fnb
 
 
-class MainWindow(wx.Frame):
-    def __init__(self, control):
-        self.control = control
+class MainWindow(BaseMainWindow):
+    def __init__(self):
         # begin wxGlade: MainWindow.__init__
-        wx.Frame.__init__(self, None, style=wx.DEFAULT_FRAME_STYLE)
+        BaseMainWindow.__init__(self, None, style=wx.DEFAULT_FRAME_STYLE)
         self.main_notebook = fnb.FlatNotebook(self)
         
-        # Menu Bar
-        self.main_menu = wx.MenuBar()
-        self.file_item = wx.Menu()
-        self.new_item = wx.MenuItem(self.file_item, wx.NewId(), _("&New...\tCtrl+N"), "", wx.ITEM_NORMAL)
-        self.file_item.AppendItem(self.new_item)
-        self.close_item = wx.MenuItem(self.file_item, wx.NewId(), _("&Close\tCtrl+W"), "", wx.ITEM_NORMAL)
-        self.file_item.AppendItem(self.close_item)
-        self.file_item.AppendSeparator()
-        self.options_item = wx.MenuItem(self.file_item, wx.NewId(), _("&Options...\tF4"), "", wx.ITEM_NORMAL)
-        self.file_item.AppendItem(self.options_item)
-        self.file_item.AppendSeparator()
-        self.quit_item = wx.MenuItem(self.file_item, wx.NewId(), _("&Quit\tCtrl+Q"), "", wx.ITEM_NORMAL)
-        self.file_item.AppendItem(self.quit_item)
-        self.main_menu.Append(self.file_item, _("&Note"))
-        self.SetMenuBar(self.main_menu)
-        # Menu Bar end
-        #self.main_text = RichTextCtrl(self.main_notebook, -1)
-
         self.__set_properties()
         self.__do_layout()
 
-        self.Bind(wx.EVT_MENU, self.on_new_item_click, self.new_item)
-        self.Bind(wx.EVT_MENU, self.on_close_item_click, self.close_item)
-        self.Bind(wx.EVT_MENU, self.on_options_item_click, self.options_item)
-        self.Bind(wx.EVT_MENU, self.on_quit_item_click, self.quit_item)
         self.Bind(wx.EVT_CLOSE, self.on_close)
         # end wxGlade
         
@@ -85,7 +63,6 @@ class MainWindow(wx.Frame):
         return name
 
     def on_new_item_click(self, event): # wxGlade: MainWindow.<event_handler>
-        self.control.notes.open_new_note()
         event.Skip()
         
     def on_close_item_click(self, event): # wxGlade: MainWindow.<event_handler>

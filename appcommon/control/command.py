@@ -22,7 +22,7 @@ class BaseCommandController(object):
         #These must be sent in this order
         pub.sendMessage('commands.created', command_tree=self.command_tree)
         pub.sendMessage('commands.changed', command_tree=self.command_tree,
-                        commands=self.commands, accel_table=self.accel_table)
+                        accel_table=self.accel_table)
         
         pub.subscribe(self.on_language_changed, 'language.changed')
         pub.subscribe(self.on_command_execute, 'command.execute')
@@ -37,12 +37,12 @@ class BaseCommandController(object):
         _save_shortcuts(self.settings, self.section, self.commands)
         self.accel_table = _get_accelerator_table(self.commands)
         pub.sendMessage('commands.changed', command_tree=self.command_tree,
-                        commands=self.commands, accel_table=self.accel_table)
+                        accel_table=self.accel_table)
         
     def on_language_changed(self):
         self._update_commands()
         pub.sendMessage('commands.changed', command_tree=self.command_tree,
-                        commands=self.commands, accel_table=self.accel_table)
+                        accel_table=self.accel_table)
         
     def on_command_execute(self, ide):
         [cmd() for cmd in self.commands if cmd.ide == ide]

@@ -17,9 +17,8 @@ class CommonTopicTree(TopicTreeDefnSimple):
             The change could be the name, description or shortcut
             in any oh them"""
             command_tree = 'The command tree'
-            commands = 'The command list'
             accel_table = 'The new accelerator table'
-            _required = 'command_tree', 'commands', 'accel_table'
+            _required = 'command_tree', 'accel_table'
             
     class command:
         'Events related to a single command'
