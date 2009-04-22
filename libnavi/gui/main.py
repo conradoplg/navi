@@ -27,9 +27,8 @@ class MainWindow(BaseMainWindow):
         self.Bind(wx.EVT_CLOSE, self.on_close)
         # end wxGlade
         
-        self.pages = []
-        
         pub.subscribe(self.on_note_opened, 'note.opened')
+        pub.subscribe(self.on_note_closed, 'note.closed')
 
     def __set_properties(self):
         # begin wxGlade: MainWindow.__set_properties
@@ -59,6 +58,19 @@ class MainWindow(BaseMainWindow):
             name = dlg.GetValue()
         dlg.Destroy()
         return name
+    
+    @property
+    def current_note(self):
+        sel = self.main_notebook.GetSelection()
+        if sel == -1:
+            return None
+        else:
+            return self.main_notebook.GetPage(sel).note
+        
+    @property
+    def pages(self):
+        return [self.main_notebook.GetPage(i) for i
+                in xrange(self.main_notebook.GetPageCount())]
 
     def on_new_item_click(self, event): # wxGlade: MainWindow.<event_handler>
         event.Skip()
@@ -80,10 +92,15 @@ class MainWindow(BaseMainWindow):
         
     def on_note_opened(self, note):
         page = NotePage(note, self.main_notebook)
-        self.pages.append(page)
         self.main_notebook.AddPage(page, note.name)
         page.text.SetValue(note.text)
         page.text.SetFocus()
+        
+    def on_note_closed(self, note):
+        idx, page = [(idx, page) for idx, page in enumerate(self.pages)
+                     if page.note is note][0]
+        self.main_notebook.RemovePage(idx)
+        page.Destroy()
     
 
 # end of class MainWindow

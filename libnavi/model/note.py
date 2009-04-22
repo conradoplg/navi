@@ -34,3 +34,6 @@ class Note(object):
                 #TODO: add nicer message
                 raise
         pub.sendMessage('note.saved', note=self)
+        
+    def close(self):
+        pub.sendMessage('note.closed', note=self)

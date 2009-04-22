@@ -24,5 +24,10 @@ class TopicTree(TopicTreeDefnSimple):
             'A note was saved'
             note = 'The saved note'
             _required = 'note'
+            
+        class closed:
+            'A note was closed'
+            note = 'The closed note'
+            _required = 'note'
 
 pub.addTopicDefnProvider(TopicTree())
