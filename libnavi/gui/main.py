@@ -25,7 +25,10 @@ class MainWindow(BaseMainWindow):
         self.__do_layout()
 
         self.Bind(wx.EVT_CLOSE, self.on_close)
+        self.Bind(fnb.EVT_FLATNOTEBOOK_PAGE_CLOSING, self.on_page_closing)
         # end wxGlade
+        
+        self._programatically_closing_page = False
         
         pub.subscribe(self.on_note_opened, 'note.opened')
         pub.subscribe(self.on_note_closed, 'note.closed')
@@ -90,6 +93,14 @@ class MainWindow(BaseMainWindow):
         pub.sendMessage('program.closed', pages=self.pages)
         self.Destroy()
         
+    def on_page_closing(self, event):
+        if self._programatically_closing_page:
+            return
+        sel = event.GetSelection()
+        pub.sendMessage('page.closing', page=self.main_notebook.GetPage(sel))
+        #The listeners to the event will close the page, so veto here
+        event.Veto()
+        
     def on_note_opened(self, note):
         page = NotePage(note, self.main_notebook)
         self.main_notebook.AddPage(page, note.name)
@@ -99,7 +110,11 @@ class MainWindow(BaseMainWindow):
     def on_note_closed(self, note):
         idx, page = [(idx, page) for idx, page in enumerate(self.pages)
                      if page.note is note][0]
-        self.main_notebook.RemovePage(idx)
+        self._programatically_closing_page = True
+        try:
+            self.main_notebook.RemovePage(idx)
+        finally:
+            self._programatically_closing_page = False
         page.Destroy()
     
 

@@ -29,5 +29,13 @@ class TopicTree(TopicTreeDefnSimple):
             'A note was closed'
             note = 'The closed note'
             _required = 'note'
+            
+    class page:
+        'Events related to a specific page in the GUI'
+            
+        class closing:
+            'A page is being closed by the user'
+            page = 'The page being closed'
+            _required = 'page'
 
 pub.addTopicDefnProvider(TopicTree())

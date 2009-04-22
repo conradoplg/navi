@@ -23,7 +23,7 @@ class CommandController(BaseCommandController):
             [Shortcut(wx.ACCEL_CTRL, ord('N'))]))
         note_cat.append(Command(
             10002, _('&Close'), _('Close the opened note'),
-            self.control.notes.close,
+            self.control.notes.close_current,
             [Shortcut(wx.ACCEL_CTRL, ord('W'))]))
         note_cat.append(None)
         note_cat.append(Command(

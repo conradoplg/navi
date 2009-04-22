@@ -19,7 +19,9 @@ class NotesController(object):
             path = self.data_dir / config.DEFAULT_NOTE_FILE_NAME
             note = Note(get_name_from_path(path), path)
             self.model.notes = [note]
+        
         pub.subscribe(self.on_program_close, 'program.closed')
+        pub.subscribe(self.on_page_closing, 'page.closing')
         
     def open_initial(self):
         for note in self.model.notes:
@@ -39,13 +41,18 @@ class NotesController(object):
             page.note.save(page.text.GetValue())
             
     def close(self, page):
-        """Close the current opened note."""
-        page = self.view.current_page
         page.note.save(page.text.GetValue())
         page.note.close()
+            
+    def close_current(self):
+        """Close the currently opened note."""
+        self.close(self.view.current_page)
         
     def on_program_close(self, pages):
         self.save(pages)
+        
+    def on_page_closing(self, page):
+        self.close(page)
 
 def get_data_dir(data_dir_specified, default_data_dir):
     isdir = True
