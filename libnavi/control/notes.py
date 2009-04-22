@@ -38,10 +38,11 @@ class NotesController(object):
         for page in pages:
             page.note.save(page.text.GetValue())
             
-    def close(self):
+    def close(self, page):
         """Close the current opened note."""
-        note = self.view.current_note
-        note.close()
+        page = self.view.current_page
+        page.note.save(page.text.GetValue())
+        page.note.close()
         
     def on_program_close(self, pages):
         self.save(pages)

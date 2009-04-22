@@ -60,12 +60,12 @@ class MainWindow(BaseMainWindow):
         return name
     
     @property
-    def current_note(self):
+    def current_page(self):
         sel = self.main_notebook.GetSelection()
         if sel == -1:
             return None
         else:
-            return self.main_notebook.GetPage(sel).note
+            return self.main_notebook.GetPage(sel)
         
     @property
     def pages(self):

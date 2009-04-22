@@ -8,10 +8,10 @@ class Test(unittest.TestCase):
 
     def test_get_current_note(self):
         window = MainWindow()
-        self.assert_(window.current_note is None)
+        self.assert_(window.current_page is None)
         note = Note('dummy', path('./tests/dummy/dummy.txt'))
         note.open()
-        self.assertEqual(note, window.current_note)
+        self.assertEqual(note, window.current_page.note)
         window.Destroy()
 
     def test_on_note_closed(self):
@@ -22,5 +22,5 @@ class Test(unittest.TestCase):
         self.assertEqual(len(window.pages), 1)
         note.close()
         self.assertEqual(len(window.pages), 0)
-        self.assert_(window.current_note is None)
+        self.assert_(window.current_page is None)
         window.Destroy()
