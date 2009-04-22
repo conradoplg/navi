@@ -37,4 +37,11 @@ class CommandController(BaseCommandController):
             [Shortcut(wx.ACCEL_CTRL, ord('Q'))]))
         commands.append(note_cat)
         
+        program_cat = CommandCategory(_('&Program'), hidden=False)
+        program_cat.append(Command(
+            20001, _('&Hide'), _('Minimize the program to the notification area'),
+            self.control.hide,
+            [Shortcut(wx.ACCEL_NORMAL, wx.WXK_ESCAPE)]))
+        commands.append(program_cat) 
+        
         return commands

@@ -62,6 +62,9 @@ class MainWindow(BaseMainWindow):
         dlg.Destroy()
         return name
     
+    def hide(self):
+        self.Show(False)
+    
     @property
     def current_page(self):
         sel = self.main_notebook.GetSelection()

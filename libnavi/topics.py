@@ -13,7 +13,7 @@ class TopicTree(TopicTreeDefnSimple):
             'The program was closed'
             pages = 'The note pages open'
             _required = 'pages'
-
+            
     class page:
         'Events related to a specific page in the GUI'
             
@@ -21,6 +21,12 @@ class TopicTree(TopicTreeDefnSimple):
             'A page is being closed by the user'
             page = 'The page being closed'
             _required = 'page'
+            
+        class key_down:
+            'A key down event was received'
+            key_code = 'The key code'
+            flags = 'The flags'
+            _required = 'key_code', 'flags'
     
     # Model topics
           

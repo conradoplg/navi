@@ -53,7 +53,8 @@ class NotesController(object):
         
     def on_page_closing(self, page):
         self.close(page)
-
+        
+        
 def get_data_dir(data_dir_specified, default_data_dir):
     isdir = True
     try:

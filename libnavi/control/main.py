@@ -9,6 +9,7 @@ from appcommon.control.main import BaseMainController
 from appcommon.model.settings import BaseSettings
 from pubsub import pub
 from libnavi.control.command import CommandController
+import wx
 import logging
 
 
@@ -25,6 +26,7 @@ class MainController(BaseMainController):
         self.commands = CommandController(self, self.settings)
         
         pub.subscribe(self.on_program_closed, 'program.closed')
+        pub.subscribe(self.on_page_key_down, 'page.key_down')
         
         #TODO: use call after? handle exceptions
         self.notes.open_initial()
@@ -34,7 +36,15 @@ class MainController(BaseMainController):
         
     def open_options(self):
         pass
+    
+    def hide(self):
+        self.notes.save(self.view.pages)
+        self.view.hide()
         
     def on_program_closed(self, pages):
         self.settings.save()
         logging.shutdown()
+        
+    def on_page_key_down(self, key_code, flags):
+        if key_code == wx.WXK_ESCAPE:
+            self.hide()
