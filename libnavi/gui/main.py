@@ -112,10 +112,9 @@ class MainWindow(BaseMainWindow):
                      if page.note is note][0]
         self._programatically_closing_page = True
         try:
-            self.main_notebook.RemovePage(idx)
+            self.main_notebook.DeletePage(idx)
         finally:
             self._programatically_closing_page = False
-        page.Destroy()
     
 
 # end of class MainWindow
