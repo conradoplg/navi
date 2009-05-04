@@ -8,11 +8,37 @@ from libnavi import meta
 from appcommon.gui.main import BaseMainWindow
 
 import wx
+import sys
 
 # begin wxGlade: dependencies
 # end wxGlade
 
 import wx.lib.flatnotebook as fnb
+
+if 'win' in sys.platform:
+    import win32con
+    from appcommon.windows import keys
+    
+    def _convert_modifiers_to_wsw(modifiers):
+        flags = 0
+        if modifiers & wx.MOD_CONTROL:
+            flags |= win32con.MOD_CONTROL
+        if modifiers & wx.MOD_SHIFT:
+            flags |= win32con.MOD_SHIFT
+        if modifiers & wx.MOD_ALT:
+            flags |= win32con.MOD_ALT
+        return flags
+    
+    def _register_hotkey(window, hotkey_id, modifiers, key_code):
+        modifiers = _convert_modifiers_to_wsw(modifiers)
+        key_code = keys.convert_wx_to_msw(key_code)
+        res = window.RegisterHotKey(hotkey_id, modifiers, key_code)
+        if res:
+            window.Bind(wx.EVT_HOTKEY, window.on_hotkey, id=hotkey_id)
+        return res
+
+    def _unregister_hotkey(window, hotkey_id):
+        return window.UnregisterHotKey(hotkey_id)
 
 
 class MainWindow(BaseMainWindow):
@@ -29,9 +55,12 @@ class MainWindow(BaseMainWindow):
         # end wxGlade
         
         self._programatically_closing_page = False
+        self._last_hotkey = None
         
         pub.subscribe(self.on_note_opened, 'note.opened')
         pub.subscribe(self.on_note_closed, 'note.closed')
+        pub.subscribe(self.on_settings_changed, 'settings.changed')
+        pub.subscribe(self.on_setting_changed, 'setting.changed')
 
     def __set_properties(self):
         # begin wxGlade: MainWindow.__set_properties
@@ -64,6 +93,11 @@ class MainWindow(BaseMainWindow):
     
     def hide(self):
         self.Show(False)
+        
+    def open_options(self, options):
+        dlg = OptionsDialog(self, options)
+        dlg.ShowModal()
+        dlg.Destroy()
     
     @property
     def current_page(self):
@@ -104,6 +138,11 @@ class MainWindow(BaseMainWindow):
         #The listeners to the event will close the page, so veto here
         event.Veto()
         
+    def on_hotkey(self, event):
+        self.Show()
+        self.Raise()
+        self.SetFocus()
+        
     def on_note_opened(self, note):
         page = NotePage(note, self.main_notebook)
         self.main_notebook.AddPage(page, note.name)
@@ -118,6 +157,23 @@ class MainWindow(BaseMainWindow):
             self.main_notebook.DeletePage(idx)
         finally:
             self._programatically_closing_page = False
+            
+    def on_settings_changed(self, settings):
+        value = settings.get('Options', 'HotKey')
+        self.on_setting_changed(settings, 'Options', 'HotKey', value)
+        
+    def on_setting_changed(self, settings, section, option, value):
+        if (section, option) == ('Options', 'HotKey'):
+            if self._last_hotkey:
+                if _unregister_hotkey(self, self._last_hotkey):
+                    self._last_hotkey = None
+            if value:
+                hotkey = 1
+                modifiers = int(value.split(',')[0])
+                key_code = int(value.split(',')[1])
+                
+                if _register_hotkey(self, hotkey, modifiers, key_code):
+                    self._last_hotkey = hotkey
     
 
 # end of class MainWindow

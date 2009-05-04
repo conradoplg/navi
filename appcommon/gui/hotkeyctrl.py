@@ -42,7 +42,7 @@ def GetKeyName(key_code):
         return _dic[key_code]
     except KeyError:
         try:
-            return chr(key_code)
+            return unichr(key_code)
         except ValueError:
             return u'[Unknown]'
         

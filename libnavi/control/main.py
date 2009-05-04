@@ -9,6 +9,7 @@ from appcommon.control.main import BaseMainController
 from appcommon.model.settings import BaseSettings
 from pubsub import pub
 from libnavi.control.command import CommandController
+from libnavi.model.options import Options
 import wx
 import logging
 
@@ -19,14 +20,15 @@ class MainController(BaseMainController):
     def __init__(self, main_script):        
         BaseMainController.__init__(self, main_script, meta, config)
         
-        self.settings = BaseSettings(self.settings_path, SETTINGS_DEFAULTS)
         self.view = MainWindow()
+        self.settings = BaseSettings(self.settings_path, SETTINGS_DEFAULTS)
         self.model = App(self.settings)
         self.notes = NotesController(self.model, self.settings, self.view, self.settings_path.parent)
         self.commands = CommandController(self, self.settings)
         
         pub.subscribe(self.on_program_closed, 'program.closed')
         pub.subscribe(self.on_page_key_down, 'page.key_down')
+        pub.subscribe(self.on_options_changing, 'options.changing')
         
         #TODO: use call after? handle exceptions
         self.notes.open_initial()
@@ -35,7 +37,9 @@ class MainController(BaseMainController):
         self.view.Close()
         
     def open_options(self):
-        pass
+        opt = Options()
+        opt.read(self.settings)
+        self.view.open_options(opt)
     
     def hide(self):
         self.notes.save(self.view.pages)
@@ -48,3 +52,11 @@ class MainController(BaseMainController):
     def on_page_key_down(self, key_code, flags):
         if key_code == wx.WXK_ESCAPE:
             self.hide()
+            
+    def on_options_changing(self, options):
+        modifiers, key_code = options.hotkey
+        if modifiers is None or key_code is None:
+            hotkey = ''
+        else:
+            hotkey = '%d,%d' % (modifiers, key_code)
+        self.settings.set('Options', 'HotKey', hotkey)

@@ -27,6 +27,19 @@ class TopicTree(TopicTreeDefnSimple):
             key_code = 'The key code'
             flags = 'The flags'
             _required = 'key_code', 'flags'
+            
+    class options:
+        'Events related to the options dialog'
+        
+        class changing:
+            'The options were changed by the user'
+            options = 'The options'
+            _required = 'options'
+            
+        class changed:
+            'The options changed by the user were validated'
+            options = 'The options'
+            _required = 'options'
     
     # Model topics
           
