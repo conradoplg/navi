@@ -6,6 +6,33 @@ from appcommon.util import flattened_full_chain
 import logging
 import traceback
 import wx
+import sys
+
+
+if 'win' in sys.platform:
+    import win32con
+    from appcommon.windows import keys
+    
+    def _convert_modifiers_to_wsw(modifiers):
+        flags = 0
+        if modifiers & wx.MOD_CONTROL:
+            flags |= win32con.MOD_CONTROL
+        if modifiers & wx.MOD_SHIFT:
+            flags |= win32con.MOD_SHIFT
+        if modifiers & wx.MOD_ALT:
+            flags |= win32con.MOD_ALT
+        return flags
+    
+    def register_hotkey(window, hotkey_id, modifiers, key_code):
+        modifiers = _convert_modifiers_to_wsw(modifiers)
+        key_code = keys.convert_wx_to_msw(key_code)
+        res = window.RegisterHotKey(hotkey_id, modifiers, key_code)
+        if res:
+            window.Bind(wx.EVT_HOTKEY, window.on_hotkey, id=hotkey_id)
+        return res
+
+    def unregister_hotkey(window, hotkey_id):
+        return window.UnregisterHotKey(hotkey_id)
 
 
 class BaseMainWindow(wx.Frame):

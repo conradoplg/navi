@@ -5,40 +5,27 @@ from libnavi.gui.options import OptionsDialog
 from pubsub import pub
 from libnavi.gui.note import NotePage
 from libnavi import meta
-from appcommon.gui.main import BaseMainWindow
+from appcommon.gui.main import BaseMainWindow, unregister_hotkey, register_hotkey
 
 import wx
-import sys
 
 # begin wxGlade: dependencies
 # end wxGlade
 
 import wx.lib.flatnotebook as fnb
 
-if 'win' in sys.platform:
-    import win32con
-    from appcommon.windows import keys
-    
-    def _convert_modifiers_to_wsw(modifiers):
-        flags = 0
-        if modifiers & wx.MOD_CONTROL:
-            flags |= win32con.MOD_CONTROL
-        if modifiers & wx.MOD_SHIFT:
-            flags |= win32con.MOD_SHIFT
-        if modifiers & wx.MOD_ALT:
-            flags |= win32con.MOD_ALT
-        return flags
-    
-    def _register_hotkey(window, hotkey_id, modifiers, key_code):
-        modifiers = _convert_modifiers_to_wsw(modifiers)
-        key_code = keys.convert_wx_to_msw(key_code)
-        res = window.RegisterHotKey(hotkey_id, modifiers, key_code)
-        if res:
-            window.Bind(wx.EVT_HOTKEY, window.on_hotkey, id=hotkey_id)
-        return res
+#To workaround the FlatNotebook focus stealing, we replace its PageContainer
+#class with a subclassed one where we can control the focus.
+OldPageContainer = fnb.PageContainer
 
-    def _unregister_hotkey(window, hotkey_id):
-        return window.UnregisterHotKey(hotkey_id)
+class PageContainer(fnb.PageContainer):
+    def __init__(self, *args, **kwargs):
+        OldPageContainer.__init__(self, *args, **kwargs)
+        
+    def SetFocus(self):
+        pass
+            
+fnb.PageContainer = PageContainer
 
 
 class MainWindow(BaseMainWindow):
@@ -52,7 +39,9 @@ class MainWindow(BaseMainWindow):
 
         self.Bind(wx.EVT_CLOSE, self.on_close)
         self.Bind(fnb.EVT_FLATNOTEBOOK_PAGE_CLOSING, self.on_page_closing)
+        self.Bind(fnb.EVT_FLATNOTEBOOK_PAGE_CHANGED, self.on_page_changed)
         # end wxGlade
+        self.Bind(wx.EVT_ACTIVATE, self.on_activate)
         
         self._programatically_closing_page = False
         self._last_hotkey = None
@@ -127,7 +116,11 @@ class MainWindow(BaseMainWindow):
         self.Close()
 
     def on_close(self, event):
+        #Needed because the event handler can be called after the the notebook is destroyed 
+        self.Unbind(wx.EVT_ACTIVATE)
         pub.sendMessage('program.closed', pages=self.pages)
+        #Cosmetic, don't show the window being destroyed
+        self.Show(False)
         self.Destroy()
         
     def on_page_closing(self, event):
@@ -141,7 +134,15 @@ class MainWindow(BaseMainWindow):
     def on_hotkey(self, event):
         self.Show()
         self.Raise()
-        self.SetFocus()
+        
+    def on_activate(self, event):
+        if self.current_page:
+            self.current_page.text.SetFocus()
+            
+    def on_page_changed(self, event):
+        sel = event.GetSelection()
+        page = self.main_notebook.GetPage(sel)
+        page.text.SetFocus()
         
     def on_note_opened(self, note):
         page = NotePage(note, self.main_notebook)
@@ -165,14 +166,14 @@ class MainWindow(BaseMainWindow):
     def on_setting_changed(self, settings, section, option, value):
         if (section, option) == ('Options', 'HotKey'):
             if self._last_hotkey:
-                if _unregister_hotkey(self, self._last_hotkey):
+                if unregister_hotkey(self, self._last_hotkey):
                     self._last_hotkey = None
             if value:
                 hotkey = 1
                 modifiers = int(value.split(',')[0])
                 key_code = int(value.split(',')[1])
                 
-                if _register_hotkey(self, hotkey, modifiers, key_code):
+                if register_hotkey(self, hotkey, modifiers, key_code):
                     self._last_hotkey = hotkey
     
 
