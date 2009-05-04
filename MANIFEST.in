@@ -1,0 +1,10 @@
+include LICENSE.txt
+include test.py
+recursive-include libnavi *
+recursive-include appcommon *
+recursive-include resources *
+prune resources/*.bat
+recursive-include tests *
+global-exclude *.git*
+global-exclude *.pyc
+global-exclude *.bak
