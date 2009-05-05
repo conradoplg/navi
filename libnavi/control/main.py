@@ -17,7 +17,7 @@ import logging
 
 class MainController(BaseMainController):
     
-    def __init__(self, main_script):        
+    def __init__(self, main_script):
         BaseMainController.__init__(self, main_script, meta, config)
         
         self.view = MainWindow()

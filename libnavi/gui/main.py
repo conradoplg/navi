@@ -4,7 +4,7 @@ from appcommon.i18n import _
 from libnavi.gui.options import OptionsDialog
 from pubsub import pub
 from libnavi.gui.note import NotePage
-from libnavi import meta
+from libnavi import meta, images
 from appcommon.gui.main import BaseMainWindow, unregister_hotkey, register_hotkey
 
 import wx
@@ -33,6 +33,7 @@ class MainWindow(BaseMainWindow):
         # begin wxGlade: MainWindow.__init__
         BaseMainWindow.__init__(self, None, style=wx.DEFAULT_FRAME_STYLE)
         self.main_notebook = fnb.FlatNotebook(self)
+        self.taskbar_icon = wx.TaskBarIcon()
         
         self.__set_properties()
         self.__do_layout()
@@ -42,6 +43,8 @@ class MainWindow(BaseMainWindow):
         self.Bind(fnb.EVT_FLATNOTEBOOK_PAGE_CHANGED, self.on_page_changed)
         # end wxGlade
         self.Bind(wx.EVT_ACTIVATE, self.on_activate)
+        self.taskbar_icon.Bind(wx.EVT_TASKBAR_CLICK, self.on_hotkey)
+        self.taskbar_icon.Bind(wx.EVT_TASKBAR_LEFT_UP, self.on_hotkey)
         
         self._programatically_closing_page = False
         self._last_hotkey = None
@@ -62,6 +65,13 @@ class MainWindow(BaseMainWindow):
         style &= ~(fnb.FNB_VC71 | fnb.FNB_VC8 | fnb.FNB_FANCY_TABS | fnb.FNB_FF2)
         style |= fnb.FNB_VC8
         self.main_notebook.SetWindowStyleFlag(style)
+        bundle = wx.IconBundle()
+        bundle.AddIcon(images.navi16.Icon)
+        bundle.AddIcon(images.navi32.Icon)
+        bundle.AddIcon(images.navi48.Icon)
+        bundle.AddIcon(images.navi256.Icon)
+        self.SetIcons(bundle)
+        self.taskbar_icon.SetIcon(images.navi16.Icon, meta.APPNAME)
 
     def __do_layout(self):
         # begin wxGlade: MainWindow.__do_layout

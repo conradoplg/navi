@@ -18,7 +18,7 @@ class ErrorDialog(wx.Dialog):
         self.REQUEST_REPORT_TXT = _("If you think this may be a bug, please report it. Thank you.")
         self.REPORT_INSTRUCTIONS_TXT = _("Please copy the error information below and click the link in order to report this error.")
         
-        error_msg = _('An error has ocurred:') + '\n'
+        error_msg = _('An error has occurred:') + '\n'
         error_msg += error
         error_details = tb
         error_details += '\n%s %s' % (meta.APPNAME, meta.VERSION)
