@@ -105,7 +105,7 @@ def convert_wx_to_msw(wxk):
             return vk
     if wxk in _specialTable:
         return _specialTable[wxk]
-    vks = win32api.VkKeyScan(wxk) & 0xFF
+    vks = win32api.VkKeyScan(chr(wxk)) & 0xFF
     if vks != 0xFF:
         return vks
     return wxk

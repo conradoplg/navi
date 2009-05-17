@@ -15,6 +15,7 @@ import wx
 
 class OptionsDialog(wx.Dialog):
     def __init__(self, parent, options):
+        self.options = options
         # begin wxGlade: OptionsDialog.__init__
         style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER|wx.THICK_FRAME
         wx.Dialog.__init__(self, parent, style=style)
@@ -40,6 +41,7 @@ class OptionsDialog(wx.Dialog):
         # begin wxGlade: OptionsDialog.__set_properties
         self.SetTitle(_("Options"))
         # end wxGlade
+        self.hotkey.SetHotkey(self.options.key_code, self.options.modifiers, False)
 
     def __do_layout(self):
         # begin wxGlade: OptionsDialog.__do_layout
@@ -70,7 +72,8 @@ class OptionsDialog(wx.Dialog):
 
     def on_ok_click(self, event): # wxGlade: OptionsDialog.<event_handler>
         opt = Options()
-        opt.hotkey = (self.hotkey.GetModifiers(), self.hotkey.GetKeyCode())
+        opt.modifiers = self.hotkey.GetModifiers()
+        opt.key_code = self.hotkey.GetKeyCode()
         pub.sendMessage('options.changing', options=opt)
         event.Skip()
 

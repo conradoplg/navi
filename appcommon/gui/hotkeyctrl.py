@@ -126,15 +126,7 @@ class HotkeyCtrl(wx.TextCtrl):
         self.SetValue(self._default_value)
     
     def OnKeyDown(self, event):
-        name = GetHotkeyName(event.GetKeyCode(), event.GetModifiers())
-        self.SetValue(name)
-        self._name = name
-        if event.GetKeyCode() != self._key_code or event.GetModifiers() != self._modifiers:
-            self._key_code = event.GetKeyCode()
-            self._modifiers = event.GetModifiers()
-            self.GetEventHandler().ProcessEvent(
-                HotkeyUpdatedEvent(self.GetId(), self._name, self._key_code,
-                                   self._modifiers, self))
+        self.SetHotkey(event.GetKeyCode(), event.GetModifiers(), True)
         event.Skip(False)
         
     def OnChar(self, event):
@@ -154,6 +146,19 @@ class HotkeyCtrl(wx.TextCtrl):
             
     def GetHotkeyName(self):
         return self._name
+    
+    def SetHotkey(self, key_code, modifiers, notify=False):
+        name = GetHotkeyName(key_code, modifiers)
+        self.SetValue(name)
+        self._name = name
+        if key_code != self._key_code or modifiers != self._modifiers:
+            self._key_code = key_code
+            self._modifiers = modifiers
+            if notify:
+                self.GetEventHandler().ProcessEvent(
+                    HotkeyUpdatedEvent(self.GetId(), self._name, self._key_code,
+                                       self._modifiers, self))
+        
             
 
 

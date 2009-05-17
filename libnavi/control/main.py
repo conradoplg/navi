@@ -58,9 +58,8 @@ class MainController(BaseMainController):
             self.hide()
             
     def on_options_changing(self, options):
-        modifiers, key_code = options.hotkey
-        if modifiers is None or key_code is None:
+        if options.modifiers is None or options.key_code is None:
             hotkey = ''
         else:
-            hotkey = '%d,%d' % (modifiers, key_code)
+            hotkey = '%d,%d' % (options.modifiers, options.key_code)
         self.settings.set('Options', 'HotKey', hotkey)

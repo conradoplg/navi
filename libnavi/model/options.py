@@ -5,5 +5,8 @@ class Options(object):
         
     def read(self, settings):
         """Read options from the settings file."""
-        self.hotkey = settings.get('Options', 'HotKey')        
+        self.hotkey = settings.get('Options', 'HotKey')
+        self.modifiers, self.key_code = self.hotkey.split(',')
+        self.modifiers = int(self.modifiers) 
+        self.key_code = int(self.key_code) 
         
