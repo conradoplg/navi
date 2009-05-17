@@ -56,6 +56,11 @@ class TopicTree(TopicTreeDefnSimple):
             note = 'The saved note'
             _required = 'note'
             
+        class show:
+            'A note should be shown'
+            note = 'The note to be shown'
+            _required = 'note'
+            
         class closed:
             'A note was closed'
             note = 'The closed note'

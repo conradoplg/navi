@@ -51,6 +51,7 @@ class MainWindow(BaseMainWindow):
         
         pub.subscribe(self.on_note_opened, 'note.opened')
         pub.subscribe(self.on_note_closed, 'note.closed')
+        pub.subscribe(self.on_note_show, 'note.show')
         pub.subscribe(self.on_settings_changed, 'settings.changed')
         pub.subscribe(self.on_setting_changed, 'setting.changed')
 
@@ -156,7 +157,7 @@ class MainWindow(BaseMainWindow):
         
     def on_note_opened(self, note):
         page = NotePage(note, self.main_notebook)
-        self.main_notebook.AddPage(page, note.name)
+        self.main_notebook.AddPage(page, note.name, select=True)
         page.text.SetValue(note.text)
         page.text.SetFocus()
         
@@ -168,6 +169,14 @@ class MainWindow(BaseMainWindow):
             self.main_notebook.DeletePage(idx)
         finally:
             self._programatically_closing_page = False
+            
+    def on_note_show(self, note):
+        sel = -1
+        for idx, page in enumerate(self.pages):
+            if page.note is note:
+                sel = idx
+        if sel != -1:
+            self.main_notebook.SetSelection(sel)
             
     def on_settings_changed(self, settings):
         value = settings.get('Options', 'HotKey')

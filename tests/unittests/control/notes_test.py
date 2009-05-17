@@ -20,6 +20,7 @@ class Test(unittest.TestCase, util.DiffTestCaseMixin):
         view = mocker.CreateMockAnything()
         
         settings.get('Options', 'DataDir').AndReturn('')
+        settings.get('Notes', 'Opened').AndReturn('')
         mocker.ReplayAll()
         
         model = App(settings)
@@ -32,6 +33,7 @@ class Test(unittest.TestCase, util.DiffTestCaseMixin):
         view = mocker.CreateMockAnything()
         
         settings.get('Options', 'DataDir').AndReturn('')
+        settings.get('Notes', 'Opened').AndReturn('')
         mocker.ReplayAll()
         
         model = App(settings)
@@ -43,8 +45,11 @@ class Test(unittest.TestCase, util.DiffTestCaseMixin):
         settings = mocker.CreateMock(BaseSettings)
         note = mocker.CreateMock(Note)
         view = mocker.CreateMockAnything()
+        note.name = 'Name'
         
         settings.get('Options', 'DataDir').AndReturn('')
+        settings.get('Notes', 'Opened').AndReturn('')
+        settings.get('Notes', 'CurrentOpened').AndReturn('Name')
         note.open(create=True)
         mocker.ReplayAll()
         
@@ -59,6 +64,7 @@ class Test(unittest.TestCase, util.DiffTestCaseMixin):
         view = mocker.CreateMock(MainWindow)
         
         settings.get('Options', 'DataDir').AndReturn('')
+        settings.get('Notes', 'Opened').AndReturn('')
         view.ask_note_name().AndReturn('subdummy')
         mocker.ReplayAll()
         
@@ -74,6 +80,7 @@ class Test(unittest.TestCase, util.DiffTestCaseMixin):
         view = mocker.CreateMock(MainWindow)
         
         settings.get('Options', 'DataDir').AndReturn('')
+        settings.get('Notes', 'Opened').AndReturn('')
         view.ask_note_name().AndReturn('')
         mocker.ReplayAll()
         

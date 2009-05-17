@@ -13,8 +13,15 @@ class NotesController(object):
         self.data_dir = get_data_dir(self.settings.get('Options', 'DataDir'),
                                      default_data_dir)
         self.notes_paths = get_notes_paths(self.data_dir)
-        self.model.notes = [Note(get_name_from_path(path), path)
-                            for path in self.notes_paths]
+        
+        opened_notes = self.settings.get('Notes', 'Opened').split(config.PATH_SEP)
+        self.model.notes = []
+        for opened_note in opened_notes:
+            if opened_note:
+                path = self.data_dir / (opened_note + config.DEFAULT_NOTE_EXTENSION)
+                note = Note(opened_note, path)
+                self.model.notes.append(note)
+        
         if not self.model.notes:
             path = self.data_dir / config.DEFAULT_NOTE_FILE_NAME
             note = Note(get_name_from_path(path), path)
@@ -24,8 +31,14 @@ class NotesController(object):
         pub.subscribe(self.on_page_closing, 'page.closing')
         
     def open_initial(self):
+        current_note_name = self.settings.get('Notes', 'CurrentOpened')
+        current_note = None
         for note in self.model.notes:
             note.open(create=True)
+            if note.name == current_note_name:
+                current_note = note
+        if current_note:
+            pub.sendMessage('note.show', note=current_note)
     
     def create_new(self):
         name = self.view.ask_note_name()
@@ -49,7 +62,7 @@ class NotesController(object):
         self.close(self.view.current_page)
         
     def on_program_close(self, pages):
-        self.save(pages)
+        self.save(pages)         
         
     def on_page_closing(self, page):
         self.close(page)
