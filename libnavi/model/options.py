@@ -10,3 +10,5 @@ class Options(object):
         self.modifiers = int(self.modifiers) 
         self.key_code = int(self.key_code) 
         
+        self.font = settings.get('Options', 'Font') 
+        

@@ -22,8 +22,8 @@ class OptionsDialog(wx.Dialog):
         self.main_notebook = wx.Notebook(self, -1, style=0)
         self.view_pane = wx.Panel(self.main_notebook, -1)
         self.font_lbl = wx.StaticText(self.view_pane, -1, _("Font"))
-        self.actual_font_lbl = wx.StaticText(self.view_pane, -1, "")
-        self.button_1 = wx.Button(self.view_pane, -1, _("Change..."))
+        self.current_font_lbl = wx.StaticText(self.view_pane, -1, "Super long dummy font name 10")
+        self.font_btn = wx.Button(self.view_pane, -1, _("Change..."))
         self.hotkey_lbl = wx.StaticText(self.view_pane, -1, _("Hotkey"))
         self.hotkey = HotkeyCtrl(self.view_pane, -1)
         self.btn_ok = wx.Button(self, wx.ID_OK, "")
@@ -32,16 +32,20 @@ class OptionsDialog(wx.Dialog):
         self.__set_properties()
         self.__do_layout()
 
-        self.Bind(wx.EVT_BUTTON, self.on_font_change_click, self.button_1)
+        self.Bind(wx.EVT_BUTTON, self.on_font_change_click, self.font_btn)
         self.Bind(wx.EVT_BUTTON, self.on_ok_click, self.btn_ok)
         self.Bind(wx.EVT_BUTTON, self.on_cancel_click, self.btn_cancel)
         # end wxGlade
+        self._set_font(self.font)
 
     def __set_properties(self):
         # begin wxGlade: OptionsDialog.__set_properties
         self.SetTitle(_("Options"))
         # end wxGlade
         self.hotkey.SetHotkey(self.options.key_code, self.options.modifiers, False)
+        self.font = wx.NORMAL_FONT
+        if self.options.font:
+            self.font.SetNativeFontInfoFromString(self.options.font)
 
     def __do_layout(self):
         # begin wxGlade: OptionsDialog.__do_layout
@@ -50,11 +54,11 @@ class OptionsDialog(wx.Dialog):
         view_sizer = wx.BoxSizer(wx.VERTICAL)
         font_sizer = wx.BoxSizer(wx.HORIZONTAL)
         view_sizer.Add(self.font_lbl, 0, wx.LEFT|wx.RIGHT|wx.TOP, 5)
-        font_sizer.Add(self.actual_font_lbl, 1, 0, 0)
-        font_sizer.Add(self.button_1, 0, 0, 0)
+        font_sizer.Add(self.current_font_lbl, 1, wx.RIGHT|wx.ALIGN_CENTER_VERTICAL, 10)
+        font_sizer.Add(self.font_btn, 0, wx.ALIGN_CENTER_VERTICAL, 0)
         view_sizer.Add(font_sizer, 0, wx.LEFT|wx.RIGHT|wx.TOP|wx.EXPAND, 5)
         view_sizer.Add(self.hotkey_lbl, 0, wx.LEFT|wx.RIGHT|wx.TOP, 5)
-        view_sizer.Add(self.hotkey, 0, wx.ALL|wx.EXPAND, 5)
+        view_sizer.Add(self.hotkey, 1, wx.ALL, 5)
         self.view_pane.SetSizer(view_sizer)
         self.main_notebook.AddPage(self.view_pane, _("View"))
         main_sizer.Add(self.main_notebook, 1, wx.ALL|wx.EXPAND, 5)
@@ -66,19 +70,36 @@ class OptionsDialog(wx.Dialog):
         main_sizer.Fit(self)
         self.Layout()
         # end wxGlade
+        self.main_sizer = main_sizer
 
     def on_font_change_click(self, event): # wxGlade: OptionsDialog.<event_handler>
+        data = wx.FontData()
+        data.SetInitialFont(self.font)
+        data.EnableEffects(False)
+        dlg = wx.FontDialog(self, data)
+        if dlg.ShowModal() == wx.ID_OK:
+            data = dlg.GetFontData()
+            font = data.GetChosenFont()
+            self._set_font(font)
         event.Skip()
 
     def on_ok_click(self, event): # wxGlade: OptionsDialog.<event_handler>
         opt = Options()
         opt.modifiers = self.hotkey.GetModifiers()
         opt.key_code = self.hotkey.GetKeyCode()
+        opt.font = self.font.NativeFontInfoDesc
         pub.sendMessage('options.changing', options=opt)
         event.Skip()
 
     def on_cancel_click(self, event): # wxGlade: OptionsDialog.<event_handler>
         event.Skip()
+        
+    def _set_font(self, font):
+        self.font = font
+        self.current_font_lbl.SetLabel(font.NativeFontInfoUserDesc)
+        self.current_font_lbl.SetFont(font)
+        self.main_sizer.Fit(self)
+        self.Layout()
 
 # end of class OptionsDialog
 

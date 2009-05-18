@@ -12,7 +12,7 @@ import wx
 # begin wxGlade: dependencies
 # end wxGlade
 
-import wx.lib.flatnotebook as fnb
+import wx.lib.agw.flatnotebook as fnb
 
 #To workaround the FlatNotebook focus stealing, we replace its PageContainer
 #class with a subclassed one where we can control the focus.
@@ -48,6 +48,7 @@ class MainWindow(BaseMainWindow):
         
         self._programatically_closing_page = False
         self._last_hotkey = None
+        self.font = wx.NORMAL_FONT
         
         pub.subscribe(self.on_note_opened, 'note.opened')
         pub.subscribe(self.on_note_closed, 'note.closed')
@@ -160,6 +161,7 @@ class MainWindow(BaseMainWindow):
         self.main_notebook.AddPage(page, note.name, select=True)
         page.text.SetValue(note.text)
         page.text.SetFocus()
+        page.text.Font = self.font
         
     def on_note_closed(self, note):
         idx, page = [(idx, page) for idx, page in enumerate(self.pages)
@@ -181,6 +183,8 @@ class MainWindow(BaseMainWindow):
     def on_settings_changed(self, settings):
         value = settings.get('Options', 'HotKey')
         self.on_setting_changed(settings, 'Options', 'HotKey', value)
+        value = settings.get('Options', 'Font')
+        self.on_setting_changed(settings, 'Options', 'Font', value)
         
     def on_setting_changed(self, settings, section, option, value):
         if (section, option) == ('Options', 'HotKey'):
@@ -194,6 +198,14 @@ class MainWindow(BaseMainWindow):
                 
                 if register_hotkey(self, hotkey, modifiers, key_code):
                     self._last_hotkey = hotkey
+        
+        if (section, option) == ('Options', 'Font'):
+            font = wx.NORMAL_FONT
+            if value:
+                font.SetNativeFontInfoFromString(value)
+            for page in self.pages:
+                page.text.Font = font
+            self.font = font
     
 
 # end of class MainWindow

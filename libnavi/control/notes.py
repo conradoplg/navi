@@ -61,6 +61,13 @@ class NotesController(object):
         """Close the currently opened note."""
         self.close(self.view.current_page)
         
+    def save_opened(self, pages):
+        """Save which notes were opened and which one was being shown."""
+        lst = [page.note.name for page in pages]
+        self.settings.set('Notes', 'Opened', config.PATH_SEP.join(lst))
+        opened_note = self.view.current_page.note.name if self.view.current_page else ''
+        self.settings.set('Notes', 'CurrentOpened', opened_note)
+        
     def on_program_close(self, pages):
         self.save(pages)         
         

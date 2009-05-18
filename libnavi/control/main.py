@@ -43,13 +43,11 @@ class MainController(BaseMainController):
     
     def hide(self):
         self.notes.save(self.view.pages)
+        self.notes.save_opened(self.view.pages)
         self.view.hide()
         
     def on_program_closed(self, pages):
-        lst = [page.note.name for page in pages]
-        self.settings.set('Notes', 'Opened', config.PATH_SEP.join(lst))
-        opened_note = self.view.current_page.note.name if self.view.current_page else ''
-        self.settings.set('Notes', 'CurrentOpened', opened_note)
+        self.notes.save_opened(pages)
         self.settings.save()
         logging.shutdown()
         
@@ -63,3 +61,4 @@ class MainController(BaseMainController):
         else:
             hotkey = '%d,%d' % (options.modifiers, options.key_code)
         self.settings.set('Options', 'HotKey', hotkey)
+        self.settings.set('Options', 'Font', options.font)
