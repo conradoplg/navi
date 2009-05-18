@@ -37,6 +37,13 @@ class CommandController(BaseCommandController):
             [Shortcut(wx.ACCEL_CTRL, ord('Q'))]))
         commands.append(note_cat)
         
+        edit_cat = CommandCategory(_('&Edit'))
+        edit_cat.append(Command(
+            30001, _('&Find'), _('Find some text in the current note'),
+            self.control.find,
+            [Shortcut(wx.ACCEL_CTRL, ord('F'))]))
+        commands.append(edit_cat)
+        
         program_cat = CommandCategory(_('&Program'), hidden=True)
         program_cat.append(Command(
             20001, _('&Hide'), _('Minimize the program to the notification area'),

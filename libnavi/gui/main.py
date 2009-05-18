@@ -6,6 +6,7 @@ from pubsub import pub
 from libnavi.gui.note import NotePage
 from libnavi import meta, images
 from appcommon.gui.main import BaseMainWindow, unregister_hotkey, register_hotkey
+from appcommon.gui.find import FindPanel
 
 import wx
 
@@ -83,6 +84,7 @@ class MainWindow(BaseMainWindow):
         self.SetSizer(main_sizer)
         self.Layout()
         # end wxGlade
+        self.main_sizer = main_sizer
         
     def ask_note_name(self):
         dlg = wx.TextEntryDialog(self, _('Enter the note name:'), _('Note name'), '')
@@ -99,6 +101,12 @@ class MainWindow(BaseMainWindow):
         dlg = OptionsDialog(self, options)
         dlg.ShowModal()
         dlg.Destroy()
+        
+    def find(self):
+        self.find_panel = FindPanel(self)
+        self.main_sizer.Add(self.find_panel, 0, wx.EXPAND, 0)
+        self.Layout()
+        self.find_panel.search_ctrl.SetFocus()
     
     @property
     def current_page(self):

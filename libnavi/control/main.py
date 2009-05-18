@@ -48,6 +48,9 @@ class MainController(BaseMainController):
         self.notes.save_opened(self.view.pages)
         self.view.hide()
         
+    def find(self):
+        self.view.find()
+        
     def on_program_closed(self, pages):
         self.view.save_position(self.settings)
         self.notes.save_opened(pages)
