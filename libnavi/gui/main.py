@@ -35,6 +35,7 @@ class MainWindow(BaseMainWindow):
         BaseMainWindow.__init__(self, None, style=wx.DEFAULT_FRAME_STYLE)
         self.main_notebook = fnb.FlatNotebook(self)
         self.taskbar_icon = wx.TaskBarIcon()
+        self.find_panel = FindPanel(self)
         
         self.__set_properties()
         self.__do_layout()
@@ -46,6 +47,10 @@ class MainWindow(BaseMainWindow):
         self.Bind(wx.EVT_ACTIVATE, self.on_activate)
         self.taskbar_icon.Bind(wx.EVT_TASKBAR_CLICK, self.on_hotkey)
         self.taskbar_icon.Bind(wx.EVT_TASKBAR_LEFT_UP, self.on_hotkey)
+        self.find_panel.search_ctrl.Bind(wx.EVT_TEXT, self.on_find_text)
+        self.find_panel.search_ctrl.Bind(wx.EVT_TEXT_ENTER, self.on_find_next)
+        self.find_panel.Bind(wx.EVT_BUTTON, self.on_find_next, id=self.find_panel.next_id)
+        self.find_panel.Bind(wx.EVT_BUTTON, self.on_find_previous, id=self.find_panel.previous_id)
         
         self._programatically_closing_page = False
         self._last_hotkey = None
@@ -75,6 +80,7 @@ class MainWindow(BaseMainWindow):
         bundle.AddIcon(images.navi256.Icon)
         self.SetIcons(bundle)
         self.taskbar_icon.SetIcon(images.navi16.Icon, meta.APPNAME)
+        self.find_panel.Hide()
 
     def __do_layout(self):
         # begin wxGlade: MainWindow.__do_layout
@@ -103,7 +109,7 @@ class MainWindow(BaseMainWindow):
         dlg.Destroy()
         
     def find(self):
-        self.find_panel = FindPanel(self)
+        self.find_panel.Show()
         self.main_sizer.Add(self.find_panel, 0, wx.EXPAND, 0)
         self.Layout()
         self.find_panel.search_ctrl.SetFocus()
@@ -164,6 +170,18 @@ class MainWindow(BaseMainWindow):
         page = self.main_notebook.GetPage(sel)
         page.text.SetFocus()
         
+    def on_find_text(self, event):
+        self._search_text(0)
+        event.Skip()
+                
+    def on_find_next(self, event):
+        self._search_text(1)
+        event.Skip()
+        
+    def on_find_previous(self, event):
+        self._search_text(-1)
+        event.Skip()
+        
     def on_note_opened(self, note):
         page = NotePage(note, self.main_notebook)
         self.main_notebook.AddPage(page, note.name, select=True)
@@ -214,6 +232,37 @@ class MainWindow(BaseMainWindow):
             for page in self.pages:
                 page.text.Font = font
             self.font = font
+            
+    def _search_text(self, next):
+        """Searches for the text in the search control.
+        
+        @param next: 0 to inline search
+            1 to search next
+            -1 to search previous
+        @type next: int
+        """
+        assert -1 <= next <= 1
+        #For some reason event.GetString() does not work
+        #TODO: report
+        query = self.find_panel.search_ctrl.Value
+        if self.current_page:
+            text_ctrl = self.current_page.text
+            text = text_ctrl.Value
+            idx = (1 if next == 1 else 0)
+            sel = text_ctrl.GetSelection()[idx]
+            wrapped = False
+            while True:
+                if next == -1: 
+                    pos = text.rfind(query, 0, sel)
+                else:
+                    pos = text.find(query, sel)
+                if pos == -1 and not wrapped:
+                    sel = (-1 if next == -1 else 0)
+                    wrapped = True
+                    continue
+                break
+            if pos != -1:
+                self.current_page.text.SetSelection(pos, pos + len(query))
     
 
 # end of class MainWindow

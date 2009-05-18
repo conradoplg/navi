@@ -6,7 +6,8 @@ class NotePage(wx.Panel):
     def __init__(self, note, *args, **kwargs):
         self.note = note
         wx.Panel.__init__(self, *args, **kwargs)
-        self.text = RichTextCtrl(self, style=wx.VSCROLL|wx.HSCROLL|wx.NO_BORDER|wx.WANTS_CHARS)
+#        self.text = RichTextCtrl(self, style=wx.VSCROLL|wx.HSCROLL|wx.NO_BORDER|wx.WANTS_CHARS)
+        self.text = wx.TextCtrl(self, style=wx.NO_BORDER|wx.TE_PROCESS_TAB|wx.TE_MULTILINE|wx.TE_RICH2|wx.TE_AUTO_URL|wx.TE_NOHIDESEL)
         self.__do_layout()
         
         self.text.Bind(wx.EVT_KEY_DOWN, self.on_key_down)
