@@ -44,8 +44,13 @@ class BaseMainWindow(wx.Frame):
         self.main_menu = wx.MenuBar()
         self.SetMenuBar(self.main_menu)
         
+        self.Bind(wx.EVT_SIZE, self.on_resize)
+        self.Bind(wx.EVT_MOVE, self.on_move)
+        
         self._hidden_menus = []
         self._accel_table = None
+        self._last_size = self.GetSizeTuple() 
+        self._last_pos = self.GetPositionTuple()
 
     def on_commands_created(self, command_tree):
         pos = 0
@@ -94,6 +99,37 @@ class BaseMainWindow(wx.Frame):
                 menu.AppendSeparator()
         return menu
     
+    def on_resize(self, event):
+        if not self.IsMaximized():
+            self._last_size = self.GetSizeTuple()
+        event.Skip()
+            
+    def on_move(self, event):
+        if not self.IsMaximized():
+            self._last_pos = self.GetPositionTuple()
+        event.Skip()
+    
+    def save_position(self, settings):
+        settings.set('Window', 'MainWindowX', self._last_pos[0])
+        settings.set('Window', 'MainWindowY', self._last_pos[1])
+        settings.set('Window', 'MainWindowWidth', self._last_size[0])
+        settings.set('Window', 'MainWindowHeight', self._last_size[1])
+        settings.set('Window', 'MainWindowMaximized', '1' if self.IsMaximized() else '0')
+        
+    def load_position(self, settings):
+        width = max(settings.getint('Window', 'MainWindowWidth'), 200)
+        height = max(settings.getint('Window', 'MainWindowHeight'), 200)
+        x = max(settings.getint('Window', 'MainWindowX'), 0)
+        y = max(settings.getint('Window', 'MainWindowY'), 0)
+        self.SetDimensions(x, y, width, height)
+        #For some reason the windows must be shown before maximized,
+        #otherwise the text editor won't fill the window
+        self.Show(True)
+        self.Maximize(settings.getboolean('Window', 'MainWindowMaximized'))
+        # Check that the window is on a valid display and move if necessary:
+        if wx.Display.GetFromWindow(self) == wx.NOT_FOUND:
+            self.SetDimensions(0, 0, width, height)
+        
     def _handle_error(self, exception, tb=None):
         if not tb:
             tb = traceback.format_exc()

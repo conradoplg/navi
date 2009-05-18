@@ -26,6 +26,8 @@ class MainController(BaseMainController):
         self.notes = NotesController(self.model, self.settings, self.view, self.settings_path.parent)
         self.commands = CommandController(self, self.settings)
         
+        self.view.load_position(self.settings)
+        
         pub.subscribe(self.on_program_closed, 'program.closed')
         pub.subscribe(self.on_page_key_down, 'page.key_down')
         pub.subscribe(self.on_options_changing, 'options.changing')
@@ -47,6 +49,7 @@ class MainController(BaseMainController):
         self.view.hide()
         
     def on_program_closed(self, pages):
+        self.view.save_position(self.settings)
         self.notes.save_opened(pages)
         self.settings.save()
         logging.shutdown()

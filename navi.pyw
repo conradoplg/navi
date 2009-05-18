@@ -31,8 +31,8 @@ class MyApp(wx.App):
         try:
             self.controller = MainController(self.script)
             self.SetTopWindow(self.controller.view)
-            if '-m' not in argv:
-                self.controller.view.Show(True)
+            if '-m' in argv:
+                self.controller.view.Show(False)
             return True
         except Exception, e:
             tb = traceback.format_exc()
