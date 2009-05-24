@@ -16,7 +16,7 @@ class FindPanel(bp.ButtonPanel):
     def __init__(self, *args, **kwds):
         # begin wxGlade: FindPanel.__init__
         bp.ButtonPanel.__init__(self, *args, **kwds)
-        self.search_ctrl = wx.SearchCtrl(self, -1)
+        self.search_ctrl = wx.SearchCtrl(self, -1, style=wx.TE_PROCESS_ENTER)
         self.case_sensitive_chk = wx.CheckBox(self, -1, _("Case sensitive"))
 
         self.__set_properties()
@@ -50,6 +50,7 @@ class FindPanel(bp.ButtonPanel):
         self.GetBPArt().SetColor(bp.BP_SELECTION_PEN_COLOR, wx.Colour(206, 206, 195))
         width = self.search_ctrl.GetTextExtent("Dummy big string for example aaaaa")[0]
         self.search_ctrl.SetMinSize((width, -1))
+        
 
 # end of class FindPanel
 

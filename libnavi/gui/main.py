@@ -49,6 +49,8 @@ class MainWindow(BaseMainWindow):
         self.taskbar_icon.Bind(wx.EVT_TASKBAR_LEFT_UP, self.on_hotkey)
         self.find_panel.search_ctrl.Bind(wx.EVT_TEXT, self.on_find_text)
         self.find_panel.search_ctrl.Bind(wx.EVT_TEXT_ENTER, self.on_find_next)
+        #XXX: can't bind on the search ctlr, so bind in the child text ctrl
+        self.find_panel.search_ctrl.Children[0].Bind(wx.EVT_KEY_DOWN, self.on_find_key_down)
         self.find_panel.Bind(wx.EVT_BUTTON, self.on_find_next, id=self.find_panel.next_id)
         self.find_panel.Bind(wx.EVT_BUTTON, self.on_find_previous, id=self.find_panel.previous_id)
         
@@ -87,6 +89,8 @@ class MainWindow(BaseMainWindow):
         main_sizer = wx.BoxSizer(wx.VERTICAL)
 #        self.main_notebook.AddPage(self.main_text, _("tab1"))
         main_sizer.Add(self.main_notebook, 1, wx.EXPAND, 0)
+        main_sizer.Add(self.find_panel, 0, wx.EXPAND, 0)
+        main_sizer.Hide(self.find_panel, True)
         self.SetSizer(main_sizer)
         self.Layout()
         # end wxGlade
@@ -109,8 +113,7 @@ class MainWindow(BaseMainWindow):
         dlg.Destroy()
         
     def find(self):
-        self.find_panel.Show()
-        self.main_sizer.Add(self.find_panel, 0, wx.EXPAND, 0)
+        self.main_sizer.Show(self.find_panel, recursive=True)
         self.Layout()
         self.find_panel.search_ctrl.SetFocus()
     
@@ -181,6 +184,15 @@ class MainWindow(BaseMainWindow):
     def on_find_previous(self, event):
         self._search_text(-1)
         event.Skip()
+        
+    def on_find_key_down(self, event):
+        if event.KeyCode == wx.WXK_ESCAPE:
+            if self.current_page:
+                self.current_page.text.SetFocus()
+            self.main_sizer.Hide(self.find_panel, True)
+            self.Layout()
+        else:
+            event.Skip()
         
     def on_note_opened(self, note):
         page = NotePage(note, self.main_notebook)
