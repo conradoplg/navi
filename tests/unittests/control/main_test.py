@@ -1,4 +1,3 @@
-from appcommon.thirdparty.moxpatch import patch
 from appcommon.model.settings import BaseSettings
 from libnavi.gui.main import MainWindow
 from libnavi.model import App
