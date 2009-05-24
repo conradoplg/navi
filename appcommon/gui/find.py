@@ -22,15 +22,19 @@ class FindPanel(bp.ButtonPanel):
         self.__set_properties()
         # end wxGlade
         
+        btn = bp.ButtonInfo(self, bmp=images.fileclose.Bitmap, shortHelp=_("Close the find panel"))
+        btn.SetTextAlignment(bp.BP_BUTTONTEXT_ALIGN_RIGHT)
+        self.AddButton(btn)
+        self.close_id = btn.Id
         self.AddControl(self.search_ctrl, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 3)
         btn = bp.ButtonInfo(self, bmp=images.down.Bitmap, text=_("Next"), shortHelp=_("Find next occurence of the text"))
         btn.SetTextAlignment(bp.BP_BUTTONTEXT_ALIGN_RIGHT)
         self.AddButton(btn)
-        self.next_id = btn.GetId()
+        self.next_id = btn.Id
         btn = bp.ButtonInfo(self, bmp=images.up.Bitmap, text=_("Previous"), shortHelp=_("Find previous occurence of the text"))
         btn.SetTextAlignment(bp.BP_BUTTONTEXT_ALIGN_RIGHT)
         self.AddButton(btn)
-        self.previous_id = btn.GetId()
+        self.previous_id = btn.Id
 #        btn = bp.ButtonInfo(self, bmp=images.pencil.Bitmap, kind=wx.ITEM_CHECK, text=_("Highlight all"), shortHelp=_("Highlight all occurences of the text"))
 #        btn.SetTextAlignment(bp.BP_BUTTONTEXT_ALIGN_RIGHT)
 #        self.AddButton(btn)

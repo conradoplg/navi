@@ -53,6 +53,7 @@ class MainWindow(BaseMainWindow):
         self.find_panel.text_ctrl.Bind(wx.EVT_KEY_DOWN, self.on_find_key_down)
         self.find_panel.Bind(wx.EVT_BUTTON, self.on_find_next, id=self.find_panel.next_id)
         self.find_panel.Bind(wx.EVT_BUTTON, self.on_find_previous, id=self.find_panel.previous_id)
+        self.find_panel.Bind(wx.EVT_BUTTON, self.on_find_close, id=self.find_panel.close_id)
         
         self._programatically_closing_page = False
         self._last_hotkey = None
@@ -188,12 +189,15 @@ class MainWindow(BaseMainWindow):
         
     def on_find_key_down(self, event):
         if event.KeyCode == wx.WXK_ESCAPE:
-            if self.current_page:
-                self.current_page.text.SetFocus()
-            self.main_sizer.Hide(self.find_panel, True)
-            self.Layout()
+            self.on_find_close(event)
         else:
             event.Skip()
+            
+    def on_find_close(self, event):
+        if self.current_page:
+            self.current_page.text.SetFocus()
+        self.main_sizer.Hide(self.find_panel, True)
+        self.Layout()
         
     def on_note_opened(self, note):
         page = NotePage(note, self.main_notebook)
