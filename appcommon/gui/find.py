@@ -51,6 +51,10 @@ class FindPanel(bp.ButtonPanel):
         width = self.search_ctrl.GetTextExtent("Dummy big string for example aaaaa")[0]
         self.search_ctrl.SetMinSize((width, -1))
         
+    @property
+    def text_ctrl(self):
+        return self.search_ctrl.Children[0]
+        
 
 # end of class FindPanel
 

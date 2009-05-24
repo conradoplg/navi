@@ -50,7 +50,7 @@ class MainWindow(BaseMainWindow):
         self.find_panel.search_ctrl.Bind(wx.EVT_TEXT, self.on_find_text)
         self.find_panel.search_ctrl.Bind(wx.EVT_TEXT_ENTER, self.on_find_next)
         #XXX: can't bind on the search ctlr, so bind in the child text ctrl
-        self.find_panel.search_ctrl.Children[0].Bind(wx.EVT_KEY_DOWN, self.on_find_key_down)
+        self.find_panel.text_ctrl.Bind(wx.EVT_KEY_DOWN, self.on_find_key_down)
         self.find_panel.Bind(wx.EVT_BUTTON, self.on_find_next, id=self.find_panel.next_id)
         self.find_panel.Bind(wx.EVT_BUTTON, self.on_find_previous, id=self.find_panel.previous_id)
         
