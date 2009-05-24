@@ -273,8 +273,13 @@ class MainWindow(BaseMainWindow):
                     wrapped = True
                     continue
                 break
-            if pos != -1:
+            if pos == -1:
+                self._search_failed()
+            else:
                 self.current_page.text.SetSelection(pos, pos + len(query))
+                
+    def _search_failed(self):
+        wx.Bell()
     
 
 # end of class MainWindow
