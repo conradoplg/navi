@@ -116,6 +116,7 @@ class MainWindow(BaseMainWindow):
         self.main_sizer.Show(self.find_panel, recursive=True)
         self.Layout()
         self.find_panel.search_ctrl.SetFocus()
+        self.find_panel.text_ctrl.SetSelection(-1, -1)
     
     @property
     def current_page(self):
