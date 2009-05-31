@@ -200,7 +200,7 @@ class MainWindow(BaseMainWindow):
         self.Layout()
         
     def on_note_opened(self, note):
-        page = NotePage(note, self.main_notebook)
+        page = NotePage(self, note, self.main_notebook)
         self.main_notebook.AddPage(page, note.name, select=True)
         page.text.SetValue(note.text)
         page.text.SetFocus()

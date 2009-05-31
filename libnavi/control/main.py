@@ -51,6 +51,9 @@ class MainController(BaseMainController):
     def find(self):
         self.view.find()
         
+    def delete_line(self):
+        pub.sendMessage('note.edit.delete_line')
+        
     def on_program_closed(self, pages):
         self.view.save_position(self.settings)
         self.notes.save_opened(pages)

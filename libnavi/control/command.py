@@ -42,6 +42,10 @@ class CommandController(BaseCommandController):
             30001, _('&Find'), _('Find some text in the current note'),
             self.control.find,
             [Shortcut(wx.ACCEL_CTRL, ord('F'))]))
+        edit_cat.append(Command(
+            30002, _('&Delete line'), _('Delete the current line'),
+            self.control.delete_line,
+            [Shortcut(wx.ACCEL_CTRL, ord('D'))]))
         commands.append(edit_cat)
         
         program_cat = CommandCategory(_('&Program'), hidden=True)

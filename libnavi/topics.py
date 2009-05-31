@@ -66,4 +66,10 @@ class TopicTree(TopicTreeDefnSimple):
             note = 'The closed note'
             _required = 'note'
             
+        class edit:
+            'Events related to note editing'
+            
+            class delete_line:
+                'The current line should be deleted'
+            
 pub.addTopicDefnProvider(TopicTree())
