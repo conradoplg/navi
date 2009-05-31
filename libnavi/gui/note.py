@@ -1,6 +1,7 @@
 from wx.richtext import RichTextCtrl
 from pubsub import pub
 from appcommon.gui.util import freeze
+import webbrowser
 import wx
 
 class NotePage(wx.Panel):
@@ -12,7 +13,14 @@ class NotePage(wx.Panel):
         self.text = wx.TextCtrl(self, style=wx.NO_BORDER|wx.TE_PROCESS_TAB|wx.TE_MULTILINE|wx.TE_RICH2|wx.TE_AUTO_URL|wx.TE_NOHIDESEL)
         self.__do_layout()
         
+        #For some reason we need to set the text after to detect previous URL's
+        def replace_and_set():
+            self.text.Replace(0, 0, note.text)
+            self.text.SetInsertionPoint(0)
+        wx.CallAfter(replace_and_set)
+        
         self.text.Bind(wx.EVT_KEY_DOWN, self.on_key_down)
+        self.text.Bind(wx.EVT_TEXT_URL, self.on_url_click)
         
         pub.subscribe(self.on_delete_line, 'note.edit.delete_line')
         pub.subscribe(self.on_duplicate_lines, 'note.edit.duplicate_lines')
@@ -28,6 +36,12 @@ class NotePage(wx.Panel):
         
     def on_key_down(self, event):
         pub.sendMessage('page.key_down', key_code=event.KeyCode, flags=event.Modifiers)
+        event.Skip()
+        
+    def on_url_click(self, event):
+        if event.MouseEvent.LeftIsDown() or event.MouseEvent.MiddleIsDown():
+            url = self.text.GetRange(event.GetURLStart(), event.GetURLEnd())
+            webbrowser.open(url)
         event.Skip()
         
     @freeze
