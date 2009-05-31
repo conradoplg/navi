@@ -72,4 +72,16 @@ class TopicTree(TopicTreeDefnSimple):
             class delete_line:
                 'The current line should be deleted'
             
+            class duplicate_lines:
+                'The current line or selected lines should be duplicated below'
+            
+            class copy_lines:
+                'The current line or selected lines should be duplicated above'
+            
+            class move_lines_down:
+                'The current line or selected lines should be moved down'
+            
+            class move_lines_up:
+                'The current line or selected lines should be moved up'
+            
 pub.addTopicDefnProvider(TopicTree())

@@ -3,6 +3,8 @@ from appcommon.control.command import BaseCommandController
 from appcommon.model.command import CommandCategory, Command
 from libnavi import config
 from appcommon.model.shortcut import Shortcut
+from functools import partial
+from pubsub import pub
 import wx
 
 
@@ -44,8 +46,24 @@ class CommandController(BaseCommandController):
             [Shortcut(wx.ACCEL_CTRL, ord('F'))]))
         edit_cat.append(Command(
             30002, _('&Delete line'), _('Delete the current line'),
-            self.control.delete_line,
+            partial(pub.sendMessage, 'note.edit.delete_line'),
             [Shortcut(wx.ACCEL_CTRL, ord('D'))]))
+        edit_cat.append(Command(
+            30003, _('Du&plicate lines'), _('Duplicate (below) the current line or the selected lines below'),
+            partial(pub.sendMessage, 'note.edit.duplicate_lines'),
+            [Shortcut(wx.ACCEL_ALT|wx.ACCEL_SHIFT, wx.WXK_DOWN)]))
+        edit_cat.append(Command(
+            30004, _('Cop&y lines'), _('Copy (above) the current line or the selected lines below'),
+            partial(pub.sendMessage, 'note.edit.copy_lines'),
+            [Shortcut(wx.ACCEL_ALT|wx.ACCEL_SHIFT, wx.WXK_UP)]))
+        edit_cat.append(Command(
+            30005, _('Move lines do&wn'), _('Move the current line or the selected lines down'),
+            partial(pub.sendMessage, 'note.edit.move_lines_down'),
+            [Shortcut(wx.ACCEL_ALT, wx.WXK_DOWN)]))
+        edit_cat.append(Command(
+            30006, _('Move lines &up'), _('Move the current line or the selected lines up'),
+            partial(pub.sendMessage, 'note.edit.move_lines_up'),
+            [Shortcut(wx.ACCEL_ALT, wx.WXK_UP)]))
         commands.append(edit_cat)
         
         program_cat = CommandCategory(_('&Program'), hidden=True)
