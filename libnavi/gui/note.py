@@ -1,5 +1,6 @@
 from wx.richtext import RichTextCtrl
 from pubsub import pub
+from appcommon.gui.util import freeze
 import wx
 
 class NotePage(wx.Panel):
@@ -29,12 +30,14 @@ class NotePage(wx.Panel):
         pub.sendMessage('page.key_down', key_code=event.KeyCode, flags=event.Modifiers)
         event.Skip()
         
+    @freeze
     def on_delete_line(self):
         if self.window.current_page is not self:
             return
         before, after, sel_text = self._get_selected_lines()
         self.text.Remove(before, after)
         
+    @freeze
     def on_duplicate_lines(self):
         if self.window.current_page is not self:
             return
@@ -42,13 +45,15 @@ class NotePage(wx.Panel):
         self.text.Replace(after, after, sel_text)
         self.text.SetSelection(after, after + len(sel_text))
         
+    @freeze
     def on_copy_lines(self):
         if self.window.current_page is not self:
             return
         before, after, sel_text = self._get_selected_lines()
         self.text.Replace(before, before, sel_text)
         self.text.SetSelection(before, after)
-        
+    
+    @freeze
     def on_move_lines_down(self):
         if self.window.current_page is not self:
             return
@@ -60,7 +65,8 @@ class NotePage(wx.Panel):
         self.text.Replace(next_break, next_break, sel_text)
         if next_break != -1:
             self.text.SetSelection(next_break, next_break + len(sel_text))
-        
+     
+    @freeze   
     def on_move_lines_up(self):
         if self.window.current_page is not self:
             return
