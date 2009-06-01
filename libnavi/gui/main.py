@@ -7,6 +7,7 @@ from libnavi.gui.note import NotePage
 from libnavi import meta, images
 from appcommon.gui.main import BaseMainWindow, unregister_hotkey, register_hotkey
 from appcommon.gui.find import FindPanel
+from libnavi.gui.open import OpenDialog
 
 import wx
 
@@ -113,6 +114,14 @@ class MainWindow(BaseMainWindow):
         dlg.ShowModal()
         dlg.Destroy()
         
+    def open_note(self, notes):
+        dlg = OpenDialog(self, notes)
+        selected_note = ''
+        if dlg.ShowModal() == wx.ID_OK:
+            selected_note = dlg.selected_note
+        dlg.Destroy()
+        return selected_note
+        
     def find(self):
         self.main_sizer.Show(self.find_panel, recursive=True)
         self.Layout()
@@ -200,8 +209,14 @@ class MainWindow(BaseMainWindow):
         self.Layout()
         
     def on_note_opened(self, note):
-        page = NotePage(self, note, self.main_notebook)
-        self.main_notebook.AddPage(page, note.name, select=True)
+        lst = [(idx, page) for idx, page in enumerate(self.pages)
+               if page.note is note]
+        if lst:
+            idx, page = lst[0]
+            self.main_notebook.SetSelection(idx)
+        else:
+            page = NotePage(self, note, self.main_notebook)
+            self.main_notebook.AddPage(page, note.name, select=True)
         page.text.SetFocus()
         page.text.Font = self.font
         

@@ -24,12 +24,16 @@ class CommandController(BaseCommandController):
             self.control.notes.create_new,
             [Shortcut(wx.ACCEL_CTRL, ord('N'))]))
         note_cat.append(Command(
+            10005, _('&Open...'), _('Open a previously created note'),
+            self.control.notes.open_note,
+            [Shortcut(wx.ACCEL_CTRL, ord('O'))]))
+        note_cat.append(Command(
             10002, _('&Close'), _('Close the opened note'),
             self.control.notes.close_current,
             [Shortcut(wx.ACCEL_CTRL, ord('W'))]))
         note_cat.append(None)
         note_cat.append(Command(
-            10003, _('&Options...'), _('Open the application options'),
+            10003, _('O&ptions...'), _('Open the application options'),
             self.control.open_options,
             [Shortcut(wx.ACCEL_NORMAL, wx.WXK_F4)]))
         note_cat.append(None)

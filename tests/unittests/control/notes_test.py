@@ -65,14 +65,14 @@ class Test(unittest.TestCase, util.DiffTestCaseMixin):
         
         settings.get('Options', 'DataDir').AndReturn('')
         settings.get('Notes', 'Opened').AndReturn('')
-        view.ask_note_name().AndReturn('subdummy')
+        view.ask_note_name().AndReturn('subdummy2')
         mocker.ReplayAll()
         
         model = App(settings)
         c = NotesController(model, settings, view, Path('./tests/dummy/subdummy'))
         c.create_new()
         self.assertEquals(2, len(model.notes))
-        self.assertEquals('subdummy.txt', model.notes[-1].path.name)
+        self.assertEquals('subdummy2.txt', model.notes[-1].path.name)
         
     def test_create_new_empty_name(self):
         mocker = mox.Mox()

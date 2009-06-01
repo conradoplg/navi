@@ -15,7 +15,7 @@ def tryint(s):
     try:
         return int(s)
     except ValueError:
-        return s
+        return s.lower()
     
 def alphanum_key(s):
     """ Turn a string into a list of string and number chunks.
