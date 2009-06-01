@@ -66,6 +66,12 @@ class TopicTree(TopicTreeDefnSimple):
             note = 'The closed note'
             _required = 'note'
             
+        class move_left:
+            'Move the current note left'
+            
+        class move_right:
+            'Move the current note right'
+            
         class edit:
             'Events related to note editing'
             

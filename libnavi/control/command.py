@@ -31,6 +31,14 @@ class CommandController(BaseCommandController):
             10002, _('&Close'), _('Close the opened note'),
             self.control.notes.close_current,
             [Shortcut(wx.ACCEL_CTRL, ord('W'))]))
+        note_cat.append(Command(
+            10006, _('Move &right'), _('Moved the opened note to the right'),
+            partial(pub.sendMessage, 'note.move_right'),
+            [Shortcut(wx.ACCEL_CTRL|wx.ACCEL_SHIFT, wx.WXK_PAGEDOWN)]))
+        note_cat.append(Command(
+            10007, _('Move &left'), _('Moved the opened note to the left'),
+            partial(pub.sendMessage, 'note.move_left'),
+            [Shortcut(wx.ACCEL_CTRL|wx.ACCEL_SHIFT, wx.WXK_PAGEUP)]))
         note_cat.append(None)
         note_cat.append(Command(
             10003, _('O&ptions...'), _('Open the application options'),

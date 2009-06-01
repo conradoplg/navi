@@ -63,6 +63,8 @@ class MainWindow(BaseMainWindow):
         pub.subscribe(self.on_note_opened, 'note.opened')
         pub.subscribe(self.on_note_closed, 'note.closed')
         pub.subscribe(self.on_note_show, 'note.show')
+        pub.subscribe(self.on_note_move_left, 'note.move_left')
+        pub.subscribe(self.on_note_move_right, 'note.move_right')
         pub.subscribe(self.on_settings_changed, 'settings.changed')
         pub.subscribe(self.on_setting_changed, 'setting.changed')
 
@@ -236,6 +238,26 @@ class MainWindow(BaseMainWindow):
                 sel = idx
         if sel != -1:
             self.main_notebook.SetSelection(sel)
+            
+    def on_note_move_right(self):
+        sel = self.main_notebook.GetSelection()
+        if sel == -1:
+            return
+        if sel == self.main_notebook.GetPageCount() - 1:
+            nsel = 0
+        else:
+            nsel = sel + 1
+        self.main_notebook._pages.MoveTabPage(sel, nsel)
+            
+    def on_note_move_left(self):
+        sel = self.main_notebook.GetSelection()
+        if sel == -1:
+            return
+        if sel == 0:
+            nsel = self.main_notebook.GetPageCount() - 1
+        else:
+            nsel = sel - 1
+        self.main_notebook._pages.MoveTabPage(sel, nsel)
             
     def on_settings_changed(self, settings):
         value = settings.get('Options', 'HotKey')
