@@ -114,7 +114,6 @@ class Test(unittest.TestCase, util.DiffTestCaseMixin):
             Path(u'./tests/dummy/a_10.txt'),
             Path(u'./tests/dummy/dummy.txt'),
             Path(u'./tests/dummy/dummy with spaces.txt'),
-            Path(u'./tests/dummy/ヅーミー.txt'),
         ]
         notes_paths = notes.get_notes_paths(Path(u'./tests/dummy/'))
         self.assertNoDiff(notes_paths, correct_notes_paths)

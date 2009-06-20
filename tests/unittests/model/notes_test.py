@@ -12,10 +12,6 @@ class Test(unittest.TestCase):
         note.open()
         self.assertEquals('', note.text)
 
-        note = Note('', Path(u'./tests/dummy/ヅーミー.txt'))
-        note.open()
-        self.assertEquals(u'ヅーミー\n', note.text)
-        
         note = Note('', Path(u'./inexistent'))
         self.assertRaises(EnvironmentError, note.open)
         
