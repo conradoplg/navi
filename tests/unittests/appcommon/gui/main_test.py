@@ -14,7 +14,7 @@ class Test(unittest.TestCase):
 
 
     def test_commands_created(self):
-        w = BaseMainWindow(None)
+        w = BaseMainWindow(None, None)
             
         cmd1 = Command(1, 'Name1', 'Desc1', lambda: 1, [])
         cmd2 = Command(2, 'Name2', 'Desc2', lambda: 1, [])

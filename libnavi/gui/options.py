@@ -42,10 +42,16 @@ class OptionsDialog(wx.Dialog):
         # begin wxGlade: OptionsDialog.__set_properties
         self.SetTitle(_("Options"))
         # end wxGlade
-        self.hotkey.SetHotkey(self.options.key_code, self.options.modifiers, False)
-        self.font = wx.NORMAL_FONT
+        if self.options.key_code is None or self.options.modifiers is None:
+            self.hotkey.Clear()
+        else: 
+            self.hotkey.SetHotkey(self.options.key_code, self.options.modifiers, False)
+        font = wx.NORMAL_FONT
         if self.options.font:
-            self.font.SetNativeFontInfoFromString(self.options.font)
+            font = wx.FontFromNativeInfoString(self.options.font)
+        if not font.Ok():
+            font = wx.NORMAL_FONT
+        self.font = font
 
     def __do_layout(self):
         # begin wxGlade: OptionsDialog.__do_layout

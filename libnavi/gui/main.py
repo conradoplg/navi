@@ -33,7 +33,7 @@ fnb.PageContainer = PageContainer
 class MainWindow(BaseMainWindow):
     def __init__(self):
         # begin wxGlade: MainWindow.__init__
-        BaseMainWindow.__init__(self, None, style=wx.DEFAULT_FRAME_STYLE)
+        BaseMainWindow.__init__(self, meta, None, style=wx.DEFAULT_FRAME_STYLE)
         self.main_notebook = fnb.FlatNotebook(self)
         self.taskbar_icon = wx.TaskBarIcon()
         self.find_panel = FindPanel(self)
@@ -187,15 +187,18 @@ class MainWindow(BaseMainWindow):
         page.text.SetFocus()
         
     def on_find_text(self, event):
-        self._search_text(0)
+        case_sensitive = self.find_panel.case_sensitive
+        self._search_text(0, case_sensitive)
         event.Skip()
                 
     def on_find_next(self, event):
-        self._search_text(1)
+        case_sensitive = self.find_panel.case_sensitive
+        self._search_text(1, case_sensitive)
         event.Skip()
         
     def on_find_previous(self, event):
-        self._search_text(-1)
+        case_sensitive = self.find_panel.case_sensitive
+        self._search_text(-1, case_sensitive)
         event.Skip()
         
     def on_find_key_down(self, event):
@@ -272,21 +275,26 @@ class MainWindow(BaseMainWindow):
                     self._last_hotkey = None
             if value:
                 hotkey = 1
-                modifiers = int(value.split(',')[0])
-                key_code = int(value.split(',')[1])
-                
-                if register_hotkey(self, hotkey, modifiers, key_code):
-                    self._last_hotkey = hotkey
+                try:
+                    modifiers = int(value.split(',')[0])
+                    key_code = int(value.split(',')[1])
+                    
+                    if register_hotkey(self, hotkey, modifiers, key_code):
+                        self._last_hotkey = hotkey
+                except (ValueError, IndexError):
+                    pass
         
         if (section, option) == ('Options', 'Font'):
             font = wx.NORMAL_FONT
             if value:
-                font.SetNativeFontInfoFromString(value)
+                font = wx.FontFromNativeInfoString(value)
+                if not font.Ok():
+                    font = wx.NORMAL_FONT
             for page in self.pages:
                 page.text.Font = font
             self.font = font
             
-    def _search_text(self, next):
+    def _search_text(self, next, case_sensitive):
         """Searches for the text in the search control.
         
         @param next: 0 to inline search
@@ -301,6 +309,9 @@ class MainWindow(BaseMainWindow):
         if self.current_page:
             text_ctrl = self.current_page.text
             text = text_ctrl.Value
+            if not case_sensitive:
+                text = text.lower()
+                query = query.lower()
             idx = (1 if next == 1 else 0)
             sel = text_ctrl.GetSelection()[idx]
             wrapped = False

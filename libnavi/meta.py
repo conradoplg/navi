@@ -2,7 +2,7 @@ import logging
 import sys
 
 APPNAME = 'Navi'
-VERSION = '1.0'
+VERSION = '1.0.1'
 DESCRIPTION = 'Notes editor'
 URL = ''
 UPDATE_URL = ''

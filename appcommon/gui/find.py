@@ -58,6 +58,10 @@ class FindPanel(bp.ButtonPanel):
     @property
     def text_ctrl(self):
         return self.search_ctrl.Children[0]
+    
+    @property
+    def case_sensitive(self):
+        return self.case_sensitive_chk.Value
         
 
 # end of class FindPanel

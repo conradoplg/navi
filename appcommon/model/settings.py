@@ -3,7 +3,7 @@ from __future__ import with_statement, absolute_import
 from ConfigParser import SafeConfigParser
 
 from pubsub import pub
-
+import wx
 
 
 class UnicodeAwareConfigParser(SafeConfigParser):
@@ -23,6 +23,7 @@ class UnicodeAwareConfigParser(SafeConfigParser):
 
 class BaseSettings(UnicodeAwareConfigParser):
     def __init__(self, path, defaults):
+        font = wx.NORMAL_FONT
         UnicodeAwareConfigParser.__init__(self)
         self.path = path
         self.read(path)

@@ -36,7 +36,8 @@ if 'win' in sys.platform:
 
 
 class BaseMainWindow(wx.Frame):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, meta, *args, **kwargs):
+        self.meta = meta
         wx.Frame.__init__(self, *args, **kwargs)
         pub.subscribe(self.on_commands_created, 'commands.created')
         pub.subscribe(self.on_commands_changed, 'commands.changed')
@@ -136,7 +137,7 @@ class BaseMainWindow(wx.Frame):
         msg, tb = util.format_exception(exception, tb)
         logging.error(tb)
         def fn():
-            dlg = ErrorDialog(parent=self, error=msg, tb=tb)
+            dlg = ErrorDialog(self.meta, msg, tb, self)
             dlg.ShowModal()
             dlg.Destroy()
         #TODO: (2,?) Investigate

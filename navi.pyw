@@ -16,32 +16,7 @@ from libnavi import util
 
 import wx
 
-import sys
 import traceback
-
-
-
-class MyApp(wx.App):
-    def __init__(self, redir, script, argv):
-        self.script = script
-        self.argv = argv
-        wx.App.__init__(self, redir, script)
-        
-    def OnInit(self):
-        try:
-            self.controller = MainController(self.script)
-            self.SetTopWindow(self.controller.view)
-            if '-m' in argv:
-                self.controller.view.Show(False)
-            return True
-        except Exception, e:
-            tb = traceback.format_exc()
-            msg, tb = util.format_exception(e, tb)
-            logging.error(tb)
-            dlg = ErrorDialog(parent=None, error=msg, tb=tb)
-            dlg.ShowModal()
-            dlg.Destroy()
-        return False
 
 try:
     script = __file__
@@ -56,5 +31,20 @@ if sys.platform == 'win32':
 else:
     argv = sys.argv
 
-app = MyApp(redir=False, script=script, argv=argv)
+app = wx.App(False)
+font = wx.NORMAL_FONT
+
+try:
+    controller = MainController(script)
+    app.SetTopWindow(controller.view)
+    if '-m' in argv:
+        controller.view.Show(False)
+except Exception, e:
+    tb = traceback.format_exc()
+    msg, tb = util.format_exception(e, tb)
+    logging.error(tb)
+    dlg = ErrorDialog(parent=None, error=msg, tb=tb)
+    dlg.ShowModal()
+    dlg.Destroy()
+
 app.MainLoop()

@@ -18,6 +18,7 @@ import logging
 class MainController(BaseMainController):
     
     def __init__(self, main_script):
+        font = wx.NORMAL_FONT
         BaseMainController.__init__(self, main_script, meta, config)
         
         self.view = MainWindow()
